@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sala de Jogos",
-  description: "Jogo da Velha e Ludo para jogar no celular, sozinho ou com outra pessoa.",
+  description: "Jogo da Velha, Ludo e Paciência Trilha para jogar no celular sem instalar.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
