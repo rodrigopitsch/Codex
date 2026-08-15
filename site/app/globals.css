@@ -29,7 +29,7 @@ button:disabled { cursor: default; }
     var(--bg);
 }
 
-.menu-card, .game-card, .ludo-card {
+.menu-card, .game-card, .ludo-card, .card-game {
   width: min(100%, 520px);
   padding: 24px;
   border: 1px solid rgba(255,255,255,0.09);
@@ -58,6 +58,9 @@ button:disabled { cursor: default; }
 .ludo-tile .tile-art { grid-template-columns: 1fr 1fr; gap: 7px; padding: 14px; background: #f8fafc; }
 .ludo-tile .tile-art i { width: 100%; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 3px rgba(0,0,0,.12); }
 .ludo-tile .tile-art i:nth-child(1) { background:#ef4444; }.ludo-tile .tile-art i:nth-child(2) { background:#22c55e; }.ludo-tile .tile-art i:nth-child(3) { background:#3b82f6; }.ludo-tile .tile-art i:nth-child(4) { background:#eab308; }
+.cards-tile .tile-art { position:relative; background:linear-gradient(145deg,#183152,#0b172d); overflow:hidden; }
+.cards-tile .tile-art i { position:absolute; width:35px; height:49px; display:grid; place-items:start; padding:4px; border-radius:5px; background:#fff; color:#111827; box-shadow:0 4px 10px rgba(0,0,0,.35); font-size:11px; font-style:normal; }
+.cards-tile .tile-art i:nth-child(1) { transform:translate(-13px,1px) rotate(-15deg); color:#dc2626; }.cards-tile .tile-art i:nth-child(2) { z-index:2; transform:translate(0,-2px); }.cards-tile .tile-art i:nth-child(3) { transform:translate(13px,1px) rotate(15deg); color:#dc2626; }
 .menu-tip { margin: 19px 2px 0; color: #7f8aa5; font-size: 12px; line-height: 1.55; text-align: center; }
 
 .tic-card { max-width: 430px; text-align: center; }
@@ -108,13 +111,34 @@ button:disabled { cursor: default; }
 .move-options { display:flex; gap:7px; overflow-x:auto; padding-top:9px; }.move-options button { flex:1 0 auto; min-height:38px; padding:0 12px; border:1px solid rgba(94,234,212,.5); border-radius:10px; background:#123b3b; color:#ccfbf1; font-weight:800; font-size:12px; }
 .ludo-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; color:var(--muted); font-size:10px; }.ludo-footer button { min-height:34px; padding:0 10px; border:1px solid rgba(255,255,255,.1); border-radius:9px; background:#111a31; font-weight:750; }
 
+.card-game { position:relative; max-width:620px; padding:18px; overflow:hidden; }
+.card-game::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 50% 35%,rgba(22,163,74,.12),transparent 45%); }
+.card-game > * { position:relative; z-index:1; }
+.card-game .game-header { margin-bottom:11px; }
+.trail-progress-top { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px 12px; padding:10px 12px; margin-bottom:9px; border-radius:14px; background:#0c1428; }
+.trail-progress-top > div:first-child { display:grid; }.trail-progress-top > div:first-child span { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.07em; }.trail-progress-top > div:first-child strong { font-size:13px; }
+.progress-rail { height:8px; overflow:hidden; border-radius:999px; background:#25304a; }.progress-rail i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c55e,#fbbf24); transition:width .25s ease; }
+.trail-stats { display:flex; gap:8px; font-size:11px; font-weight:800; }.trail-stats span:first-child { color:#fb7185; }
+.level-ribbon { display:flex; gap:5px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none; }.level-ribbon::-webkit-scrollbar { display:none; }
+.level-ribbon button { flex:0 0 42px; min-height:42px; display:grid; place-items:center; gap:0; padding:3px; border:1px solid rgba(255,255,255,.09); border-radius:11px; background:#0c1428; color:var(--muted); }.level-ribbon button.active { border-color:#fbbf24; color:#fff; background:#453519; }.level-ribbon button:disabled { opacity:.38; }.level-ribbon button b { font-size:12px; }.level-ribbon button span { min-height:9px; color:#fbbf24; font-size:7px; letter-spacing:-2px; }
+.trail-table { position:relative; min-height:480px; display:grid; align-content:start; gap:12px; padding:16px; border:1px solid rgba(255,255,255,.1); border-radius:22px; background:radial-gradient(circle at 50% 30%,#176b42,#0c422b 70%); box-shadow:inset 0 0 40px rgba(0,0,0,.28); }
+.foundation-zone { display:grid; justify-items:center; gap:5px; }.zone-label { color:#bbf7d0; font-size:10px; font-weight:850; text-transform:uppercase; letter-spacing:.1em; }.foundation-zone p { margin:0; color:#d1fae5; font-size:11px; font-weight:750; }
+.playing-card { position:relative; width:82px; aspect-ratio:5/7; padding:0; border:2px solid rgba(255,255,255,.9); border-radius:11px; background:linear-gradient(145deg,#fff,#e8edf4); box-shadow:0 8px 20px rgba(0,0,0,.35); user-select:none; transition:transform .13s ease,box-shadow .13s ease; }.playing-card:disabled { opacity:1; }.playing-card.card-red { color:#dc2626; }.playing-card.card-black { color:#111827; }.playing-card > strong { font-family:Georgia,serif; font-size:34px; }.card-corner { position:absolute; left:6px; top:5px; display:grid; justify-items:center; line-height:.88; }.card-corner b { font-family:Georgia,serif; font-size:15px; }.card-corner i { font-size:12px; font-style:normal; }.card-corner.bottom { left:auto; top:auto; right:6px; bottom:5px; transform:rotate(180deg); }
+.trail-hand { min-height:132px; display:flex; justify-content:center; align-items:center; padding:10px 0; }.trail-hand .playing-card { width:min(17vw,78px); margin-left:clamp(-17px,-2vw,-8px); transform:rotate(var(--tilt,0deg)); }.trail-hand .playing-card:first-child { margin-left:0; }.trail-hand .playing-card:nth-child(odd) { --tilt:-2deg; }.trail-hand .playing-card:nth-child(even) { --tilt:2deg; }.trail-hand .playing-card:active { transform:translateY(-6px) scale(.97); }.trail-hand .playing-card.selectable { box-shadow:0 0 0 3px rgba(250,204,21,.82),0 10px 22px rgba(0,0,0,.4); }.trail-hand .playing-card.hinted { z-index:4; animation:cardHint .55s ease-in-out infinite alternate; }
+.trail-message { min-height:20px; margin:0; color:#ecfdf5; font-size:13px; font-weight:750; text-align:center; }
+.trail-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }.trail-actions button { min-height:42px; border:1px solid rgba(255,255,255,.16); border-radius:11px; background:rgba(4,32,22,.66); color:#dcfce7; font-weight:800; }.trail-actions button:disabled { opacity:.42; }.trail-actions b { display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:4px; border-radius:999px; background:#f8fafc; color:#14532d; font-size:10px; }
+.trail-result { position:absolute; z-index:8; inset:12px; display:grid; place-content:center; justify-items:center; padding:22px; border:1px solid rgba(255,255,255,.18); border-radius:18px; background:rgba(6,15,29,.94); text-align:center; backdrop-filter:blur(8px); }.trail-result > span { font-size:48px; }.trail-result h2 { margin:6px 0 4px; }.trail-result p { margin:0 0 16px; color:var(--muted); }.trail-result > div { display:flex; gap:8px; }.trail-result button { min-height:43px; padding:0 14px; border:1px solid rgba(255,255,255,.14); border-radius:11px; background:#1e293b; font-weight:800; }.trail-result button.result-primary { border:0; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#281803; }
+.trail-footer { display:flex; justify-content:space-between; gap:10px; padding:10px 3px 0; color:var(--muted); font-size:10px; }.trail-footer b { color:#fbbf24; }
+
 @keyframes pulse { to { transform:scale(.96); } }
 @keyframes tokenGlow { to { transform:translate(-50%,-50%) scale(1.28); box-shadow:0 0 0 4px rgba(255,255,255,.75),0 3px 8px rgba(0,0,0,.5); } }
+@keyframes cardHint { to { transform:translateY(-12px) scale(1.05); box-shadow:0 0 0 5px #fbbf24,0 16px 30px rgba(0,0,0,.45); } }
 @media (max-width:420px) {
-  .menu-card,.game-card,.ludo-card { padding:16px; border-radius:22px; }
+  .menu-card,.game-card,.ludo-card,.card-game { padding:16px; border-radius:22px; }
   .ludo-card { padding:12px; }.game-header { margin-bottom:10px; }.game-header h1 { font-size:24px; }
   .ludo-config { gap:7px; }.ludo-board { border-width:3px; border-radius:14px; }.turn-copy { padding:8px 10px; }.turn-copy strong { font-size:12px; }
   .player-badge { padding:5px 3px; gap:2px 3px; }.ludo-token { --size:5.8%; }
+  .card-game { padding:12px; }.trail-progress-top { grid-template-columns:auto 1fr; }.trail-stats { grid-column:1/-1; justify-content:space-between; }.trail-table { min-height:430px; padding:12px 8px; }.playing-card { width:70px; }.trail-hand .playing-card { width:min(19vw,70px); }.trail-footer { font-size:9px; }
 }
 @media (max-height:700px) and (orientation:landscape) { .app-shell { place-items:start center; } }
 @media (prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
