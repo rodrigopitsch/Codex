@@ -480,6 +480,7 @@ function CardTrail({ onBack }: { onBack: () => void }) {
   const [phase, setPhase] = useState<"playing" | "won" | "lost">("playing");
   const [message, setMessage] = useState("Encaixe uma carta vizinha");
   const [hintId, setHintId] = useState<number | null>(null);
+  const [showRules, setShowRules] = useState(true);
 
   const goal = 7 + level * 2;
   const handSize = level <= 4 ? 5 : level <= 8 ? 4 : 3;
@@ -489,8 +490,15 @@ function CardTrail({ onBack }: { onBack: () => void }) {
     try {
       const stored = window.localStorage.getItem("sala-jogos-trilha-progress");
       if (stored) setSaved(JSON.parse(stored) as TrailProgress);
+      setShowRules(window.localStorage.getItem("sala-jogos-trilha-tutorial") !== "ok");
     } catch { /* progresso local indisponível */ }
   }, []);
+
+  function closeRules() {
+    setShowRules(false);
+    try { window.localStorage.setItem("sala-jogos-trilha-tutorial", "ok"); } catch { /* jogo continua normalmente */ }
+    window.setTimeout(showHint, 180);
+  }
 
   function persist(next: TrailProgress) {
     setSaved(next);
@@ -561,6 +569,8 @@ function CardTrail({ onBack }: { onBack: () => void }) {
         <div className="trail-stats"><span>♥ {lives}</span><span>Combo {combo}</span><span>{score} pts</span></div>
       </div>
 
+      <button className="how-to-button" onClick={() => setShowRules(true)}>ⓘ Como jogar</button>
+
       <div className="level-ribbon" aria-label="Níveis da Paciência Trilha">
         {Array.from({ length: TRAIL_LEVELS }, (_, index) => index + 1).map((item) => {
           const unlocked = item <= saved.unlocked;
@@ -574,6 +584,8 @@ function CardTrail({ onBack }: { onBack: () => void }) {
           <CardFace card={foundation} />
           <p>Jogue {RANK_LABELS[wrapRank(foundation.rank - 1)]} ou {RANK_LABELS[wrapRank(foundation.rank + 1)]}</p>
         </div>
+
+        <div className="hand-instruction"><span>↓</span> Toque numa carta iluminada da sua mão</div>
 
         <div className="trail-hand" aria-label="Sua mão de cartas">
           {hand.map((card) => <CardFace key={card.id} card={card} selectable={isNeighbor(card.rank, foundation.rank)} hinted={hintId === card.id} onClick={() => playCard(card)} />)}
@@ -593,6 +605,27 @@ function CardTrail({ onBack }: { onBack: () => void }) {
             <div>
               <button onClick={() => startLevel(level)}>Jogar novamente</button>
               {phase === "won" && level < TRAIL_LEVELS && <button className="result-primary" onClick={() => startLevel(level + 1)}>Próximo nível</button>}
+            </div>
+          </div>
+        )}
+
+        {showRules && (
+          <div className="rules-overlay" role="dialog" aria-modal="true" aria-labelledby="trail-rules-title">
+            <div className="rules-sheet">
+              <span className="rules-kicker">Aprenda em 20 segundos</span>
+              <h2 id="trail-rules-title">Como jogar</h2>
+              <p className="rules-lead">Monte uma sequência usando uma carta <b>um número acima ou abaixo</b> da carta central.</p>
+              <div className="rule-example" aria-label="Exemplo: sobre um sete, jogue seis ou oito">
+                <span className="mini-card">6♠</span><i>ou</i><span className="mini-card center">7♥</span><i>ou</i><span className="mini-card">8♦</span>
+              </div>
+              <p className="rule-caption">Se a carta central é 7, toque em um 6 ou 8 da sua mão.</p>
+              <ol>
+                <li><b>Procure o brilho amarelo:</b> ele marca as cartas válidas.</li>
+                <li><b>Complete a barra:</b> cada carta certa aproxima você do próximo nível.</li>
+                <li><b>Cuidado com os erros:</b> uma carta errada tira uma vida.</li>
+              </ol>
+              <div className="rules-notes"><span>Ás ↔ Rei também encaixam</span><span>Combos dão mais pontos</span></div>
+              <button className="rules-start" onClick={closeRules}>Entendi — começar</button>
             </div>
           </div>
         )}
