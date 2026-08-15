@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 
-type Screen = "menu" | "tic" | "ludo";
+type Screen = "menu" | "tic" | "ludo" | "cards";
 type Mark = "" | "X" | "O";
 type TicMode = "duo" | "cpu";
 type TicOutcome = { winner: Mark | "draw"; line: number[] };
@@ -19,6 +19,9 @@ type LudoPlayer = {
   human: boolean;
   pieces: LudoPiece[];
 };
+type Suit = "♠" | "♥" | "♦" | "♣";
+type TrailCard = { id: number; rank: number; suit: Suit };
+type TrailProgress = { unlocked: number; stars: Record<number, number>; bestCombo: number };
 
 const winningLines = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -57,6 +60,10 @@ const PLAYER_SEEDS: Omit<LudoPlayer, "pieces">[] = [
 const SAFE_TRACK = new Set([0, 8, 13, 21, 26, 34, 39, 47]);
 const START_COLORS: Partial<Record<number, Color>> = { 0: "red", 13: "green", 26: "yellow", 39: "blue" };
 const DIE_FACES = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+const SUITS: Suit[] = ["♠", "♥", "♦", "♣"];
+const RANK_LABELS = ["", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+const TRAIL_LEVELS = 12;
+let cardId = 0;
 
 function ticOutcome(board: Mark[]): TicOutcome | null {
   for (const line of winningLines) {
@@ -176,6 +183,33 @@ function pieceCoordinate(player: LudoPlayer, piece: LudoPiece): Coord {
   if (piece.steps === -1) return BASE_SPOTS[player.id][piece.id];
   if (piece.steps <= 51) return TRACK[(player.start + piece.steps) % 52];
   return HOME_LANES[player.id][Math.min(piece.steps - 52, 5)];
+}
+
+function randomSuit(): Suit {
+  return SUITS[Math.floor(Math.random() * SUITS.length)];
+}
+
+function wrapRank(rank: number): number {
+  return rank < 1 ? 13 : rank > 13 ? 1 : rank;
+}
+
+function isNeighbor(rank: number, foundation: number): boolean {
+  return wrapRank(foundation - 1) === rank || wrapRank(foundation + 1) === rank;
+}
+
+function makeTrailCard(rank: number): TrailCard {
+  cardId += 1;
+  return { id: cardId, rank: wrapRank(rank), suit: randomSuit() };
+}
+
+function makeTrailHand(foundation: number, count: number): TrailCard[] {
+  const direction = Math.random() > .5 ? 1 : -1;
+  const cards = [makeTrailCard(foundation + direction)];
+  while (cards.length < count) {
+    const rank = Math.floor(Math.random() * 13) + 1;
+    if (!isNeighbor(rank, foundation)) cards.push(makeTrailCard(rank));
+  }
+  return cards.sort(() => Math.random() - .5);
 }
 
 function TicTacToe({ onBack }: { onBack: () => void }) {
@@ -416,6 +450,159 @@ function Ludo({ onBack }: { onBack: () => void }) {
   );
 }
 
+function CardFace({ card, selectable = false, hinted = false, onClick }: { card: TrailCard; selectable?: boolean; hinted?: boolean; onClick?: () => void }) {
+  const red = card.suit === "♥" || card.suit === "♦";
+  return (
+    <button
+      aria-label={`${RANK_LABELS[card.rank]} de ${card.suit}`}
+      className={`playing-card ${red ? "card-red" : "card-black"} ${selectable ? "selectable" : ""} ${hinted ? "hinted" : ""}`}
+      disabled={!onClick}
+      onClick={onClick}
+    >
+      <span className="card-corner"><b>{RANK_LABELS[card.rank]}</b><i>{card.suit}</i></span>
+      <strong>{card.suit}</strong>
+      <span className="card-corner bottom"><b>{RANK_LABELS[card.rank]}</b><i>{card.suit}</i></span>
+    </button>
+  );
+}
+
+function CardTrail({ onBack }: { onBack: () => void }) {
+  const [saved, setSaved] = useState<TrailProgress>({ unlocked: 1, stars: {}, bestCombo: 0 });
+  const [level, setLevel] = useState(1);
+  const [foundation, setFoundation] = useState<TrailCard>(() => makeTrailCard(7));
+  const [hand, setHand] = useState<TrailCard[]>(() => makeTrailHand(7, 5));
+  const [moves, setMoves] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [shuffles, setShuffles] = useState(4);
+  const [combo, setCombo] = useState(0);
+  const [bestCombo, setBestCombo] = useState(0);
+  const [score, setScore] = useState(0);
+  const [phase, setPhase] = useState<"playing" | "won" | "lost">("playing");
+  const [message, setMessage] = useState("Encaixe uma carta vizinha");
+  const [hintId, setHintId] = useState<number | null>(null);
+
+  const goal = 7 + level * 2;
+  const handSize = level <= 4 ? 5 : level <= 8 ? 4 : 3;
+  const initialShuffles = Math.max(4 - Math.floor((level - 1) / 4), 2);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("sala-jogos-trilha-progress");
+      if (stored) setSaved(JSON.parse(stored) as TrailProgress);
+    } catch { /* progresso local indisponível */ }
+  }, []);
+
+  function persist(next: TrailProgress) {
+    setSaved(next);
+    try { window.localStorage.setItem("sala-jogos-trilha-progress", JSON.stringify(next)); } catch { /* jogo continua sem salvar */ }
+  }
+
+  function startLevel(nextLevel: number) {
+    const start = makeTrailCard(Math.floor(Math.random() * 13) + 1);
+    const nextHandSize = nextLevel <= 4 ? 5 : nextLevel <= 8 ? 4 : 3;
+    setLevel(nextLevel);
+    setFoundation(start);
+    setHand(makeTrailHand(start.rank, nextHandSize));
+    setMoves(0); setLives(3); setCombo(0); setBestCombo(0); setScore(0);
+    setShuffles(Math.max(4 - Math.floor((nextLevel - 1) / 4), 2));
+    setPhase("playing"); setMessage("Encaixe uma carta vizinha"); setHintId(null);
+  }
+
+  function playCard(card: TrailCard) {
+    if (phase !== "playing") return;
+    if (!isNeighbor(card.rank, foundation.rank)) {
+      const nextLives = lives - 1;
+      setLives(nextLives); setCombo(0); setMessage("Essa carta não encaixa. Tente a anterior ou a próxima.");
+      if (nextLives === 0) setPhase("lost");
+      return;
+    }
+
+    const nextMoves = moves + 1;
+    const nextCombo = combo + 1;
+    const nextBest = Math.max(bestCombo, nextCombo);
+    const replacement = makeTrailCard(card.rank + (Math.random() > .5 ? 1 : -1));
+    setFoundation(card); setMoves(nextMoves); setCombo(nextCombo); setBestCombo(nextBest);
+    setScore((value) => value + 100 + nextCombo * 20);
+    setHand((cards) => cards.map((item) => item.id === card.id ? replacement : item).sort(() => Math.random() - .5));
+    setMessage(nextCombo >= 5 ? `Sequência de ${nextCombo}!` : "Boa jogada — continue a trilha");
+    setHintId(null);
+
+    if (nextMoves >= goal) {
+      const earned = lives === 3 && shuffles >= initialShuffles - 1 ? 3 : lives >= 2 ? 2 : 1;
+      const nextSaved: TrailProgress = {
+        unlocked: Math.max(saved.unlocked, Math.min(TRAIL_LEVELS, level + 1)),
+        stars: { ...saved.stars, [level]: Math.max(saved.stars[level] || 0, earned) },
+        bestCombo: Math.max(saved.bestCombo, nextBest),
+      };
+      persist(nextSaved); setPhase("won"); setMessage(`Nível concluído com ${earned} estrela${earned > 1 ? "s" : ""}!`);
+    }
+  }
+
+  function shuffleHand() {
+    if (phase !== "playing" || shuffles <= 0) return;
+    setHand(makeTrailHand(foundation.rank, handSize));
+    setShuffles((value) => value - 1); setCombo(0); setMessage("Nova mão distribuída"); setHintId(null);
+  }
+
+  function showHint() {
+    const valid = hand.find((card) => isNeighbor(card.rank, foundation.rank));
+    if (!valid) return;
+    setHintId(valid.id); setMessage("A carta iluminada continua a sequência");
+    window.setTimeout(() => setHintId(null), 1400);
+  }
+
+  return (
+    <section className="card-game" aria-label="Paciência Trilha">
+      <GameHeader title="Paciência Trilha" subtitle="Paciência encontra dominó" onBack={onBack} />
+
+      <div className="trail-progress-top">
+        <div><span>Nível {level}</span><strong>{moves}/{goal} cartas</strong></div>
+        <div className="progress-rail"><i style={{ width: `${Math.min(100, moves / goal * 100)}%` }} /></div>
+        <div className="trail-stats"><span>♥ {lives}</span><span>Combo {combo}</span><span>{score} pts</span></div>
+      </div>
+
+      <div className="level-ribbon" aria-label="Níveis da Paciência Trilha">
+        {Array.from({ length: TRAIL_LEVELS }, (_, index) => index + 1).map((item) => {
+          const unlocked = item <= saved.unlocked;
+          return <button className={item === level ? "active" : ""} disabled={!unlocked} key={item} onClick={() => startLevel(item)}><b>{unlocked ? item : "•"}</b><span>{"★".repeat(saved.stars[item] || 0)}</span></button>;
+        })}
+      </div>
+
+      <div className="trail-table">
+        <div className="foundation-zone">
+          <span className="zone-label">Carta da trilha</span>
+          <CardFace card={foundation} />
+          <p>Jogue {RANK_LABELS[wrapRank(foundation.rank - 1)]} ou {RANK_LABELS[wrapRank(foundation.rank + 1)]}</p>
+        </div>
+
+        <div className="trail-hand" aria-label="Sua mão de cartas">
+          {hand.map((card) => <CardFace key={card.id} card={card} selectable={isNeighbor(card.rank, foundation.rank)} hinted={hintId === card.id} onClick={() => playCard(card)} />)}
+        </div>
+
+        <p className="trail-message" aria-live="polite">{message}</p>
+        <div className="trail-actions">
+          <button onClick={showHint} disabled={phase !== "playing"}>💡 Dica</button>
+          <button onClick={shuffleHand} disabled={phase !== "playing" || shuffles === 0}>↻ Trocar mão <b>{shuffles}</b></button>
+        </div>
+
+        {phase !== "playing" && (
+          <div className={`trail-result ${phase}`}>
+            <span>{phase === "won" ? "🏆" : "🃏"}</span>
+            <h2>{phase === "won" ? "Trilha completa!" : "Fim da rodada"}</h2>
+            <p>{phase === "won" ? `Melhor sequência: ${bestCombo}` : "Tente novamente — cada partida dura poucos minutos."}</p>
+            <div>
+              <button onClick={() => startLevel(level)}>Jogar novamente</button>
+              {phase === "won" && level < TRAIL_LEVELS && <button className="result-primary" onClick={() => startLevel(level + 1)}>Próximo nível</button>}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <footer className="trail-footer"><span>Melhor combo: <b>{Math.max(saved.bestCombo, bestCombo)}</b></span><span>Progresso salvo neste aparelho</span></footer>
+    </section>
+  );
+}
+
 function Menu({ onSelect }: { onSelect: (screen: Screen) => void }) {
   return (
     <section className="menu-card">
@@ -427,6 +614,9 @@ function Menu({ onSelect }: { onSelect: (screen: Screen) => void }) {
         </button>
         <button className="game-tile ludo-tile" onClick={() => onSelect("ludo")}>
           <span className="tile-art"><i /><i /><i /><i /></span><span><b>Ludo</b><small>3 níveis • Dificuldade ajustável</small></span><em>›</em>
+        </button>
+        <button className="game-tile cards-tile" onClick={() => onSelect("cards")}>
+          <span className="tile-art"><i>Q♥</i><i>J♠</i><i>10♦</i></span><span><b>Paciência Trilha</b><small>12 níveis • Combos • Progresso salvo</small></span><em>›</em>
         </button>
       </div>
       <p className="menu-tip">Dica: no Safari, use “Adicionar à Tela de Início” para abrir como aplicativo.</p>
@@ -441,6 +631,7 @@ export default function Home() {
       {screen === "menu" && <Menu onSelect={setScreen} />}
       {screen === "tic" && <TicTacToe onBack={() => setScreen("menu")} />}
       {screen === "ludo" && <Ludo onBack={() => setScreen("menu")} />}
+      {screen === "cards" && <CardTrail onBack={() => setScreen("menu")} />}
     </main>
   );
 }
