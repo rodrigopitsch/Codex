@@ -6,8 +6,8 @@
 <a class="tile ludo" href="./ludo.html"><span class="art"><i></i><i></i><i></i><i></i></span><span class="copy"><b>Ludo</b><small>3 níveis • dificuldade ajustável • offline</small></span><em>›</em></a>
 <a class="tile cards" href="./paciencia-trilha.html"><span class="art"><i>Q♥</i><i>J♠</i><i>10♦</i></span><span class="copy"><b>Paciência Trilha</b><small>12 níveis • combos • progresso salvo</small></span><em>›</em></a>
 </div><div class="section">Caçadas</div><div class="list">
-<a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>Cartas • 4 dificuldades • evolução • offline</small></span><em>›</em></a>
-<a class="tile hybrid" href="./occult-trail.html"><span class="art"><i>Q♥</i><i>A♠</i><i>K♦</i></span><span class="copy"><b>Trilha Oculta</b><small>Visual de Paciência • caça • progressão • offline</small></span><em>›</em></a>
+<a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>25 casos • chefes • relíquias • offline</small></span><em>›</em></a>
+<a class="tile hybrid" href="./occult-trail.html"><span class="art"><i>Q♥</i><i>A♠</i><i>K♦</i></span><span class="copy"><b>Trilha Oculta</b><small>25 casos • Royal Flush • progressão • offline</small></span><em>›</em></a>
 </div><p class="tip">Quando aparecer <b>“Offline pronto”</b>, você pode desligar Wi‑Fi e dados móveis. Para abrir depois como app: Safari → Compartilhar → Adicionar à Tela de Início.</p></main><script>
 const box=document.getElementById('offline'),txt=document.getElementById('offtxt');
 async function setupOffline(){
@@ -18,7 +18,7 @@ async function setupOffline(){
      await new Promise((ok,fail)=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='activated')ok();if(w.state==='redundant')fail(new Error('sw'))})});
    }
    await navigator.serviceWorker.ready;
-   const cache=await caches.open('sala-jogos-offline-v2');
+   const cache=await caches.open('sala-jogos-offline-v3');
    const expected=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html'];
    const stored=await Promise.all(expected.map(u=>cache.match(u)));
    if(stored.every(Boolean)){box.classList.add('ready');txt.textContent='✓ Offline pronto — os 5 jogos estão salvos. Pode desligar a internet.'}
