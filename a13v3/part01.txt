@@ -1,0 +1,50 @@
+line-height:1.45}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:11px 0}.stat{padding:9px;border:1px solid #2b354a;border-radius:11px;background:#090e17;text-align:center}.stat b{display:block;font-size:16px}.stat small{font-size:7px;color:#8290a7;font-weight:900}.caseList{display:grid;gap:7px;margin:10px 0;max-height:220px;overflow:auto;touch-action:pan-y}.caseBtn{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:8px;padding:8px;border-radius:12px;border:1px solid #303b52;background:#111827;text-align:left}.caseBtn.lock{opacity:.42}.caseBtn.current{border-color:#76589c;background:#1b1530}.caseNum{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#090e18;font-weight:900;color:#d7c0ff}.caseBtn b{font-size:10px}.caseBtn small{display:block;color:#8fa0b6;font-size:8px;margin-top:2px}.caseBtn em{font-style:normal;color:#ffd36b;font-size:10px;font-weight:900}.upgrades{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:10px 0}.upgrade{min-height:44px;padding:8px;border-radius:11px;border:1px solid #594827;background:#201a0e;text-align:left}.upgrade b{display:block;font-size:9px;color:#ffe0a3}.upgrade small{display:block;margin-top:2px;color:#aa9c7f;font-size:8px}.btns{display:grid;grid-template-columns:1fr 1.35fr;gap:8px;margin-top:11px}.btn{min-height:47px;border-radius:12px;border:1px solid #38435b;background:#182131;font-weight:900}.primary{border:0;background:linear-gradient(135deg,#704ab9,#3c2b80)}.danger{background:#2a1219;border-color:#5b2c39;color:#ffadb6}.helpGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.help{padding:9px;border-radius:11px;border:1px solid #2e394f;background:#0b1019}.help b{display:block;font-size:10px}.help small{color:#8fa0b6;font-size:8px}.orient{position:absolute;inset:0;z-index:50;display:none;place-items:center;background:#060812f2;padding:20px;text-align:center}.orient b{font-size:18px}.orient p{color:#9eacc1;font-size:12px}.orient.on{display:grid}
+@media (orientation:landscape){.top{height:44px;flex-basis:44px}.top .title small{display:none}.controls{padding-bottom:max(5px,env(safe-area-inset-bottom))}.ctl{width:68px;height:68px;font-size:24px}.pad .ctl{width:64px;height:64px}.jump,.shoot{width:72px;height:72px}.hud{top:6px;left:6px;right:6px}.objective{top:51px}.bossbar{top:49px}}
+@media (max-width:390px){.rank{display:none}.hudBox{padding:5px}.hudBox b{font-size:10px}.ctl{width:70px;height:70px}.pad .ctl{width:65px;height:65px}.jump,.shoot{width:76px;height:76px}.card{padding:15px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <button class="back" id="backBtn" aria-label="Voltar">‹</button>
+    <div class="title"><b>ARQUIVO 13 — CAÇADA 2D</b><small>plataforma sobrenatural • progresso independente</small></div>
+    <div class="rank" id="rankBadge">NV 1</div>
+    <button class="iconBtn" id="soundBtn" aria-label="Som">🔊</button>
+    <button class="iconBtn" id="menuBtn" aria-label="Menu">☰</button>
+  </header>
+  <main class="stage" id="stage">
+    <canvas id="game" aria-label="Arquivo 13"></canvas>
+    <div class="hud" id="hud">
+      <div class="hudBox"><small>VIDA</small><b id="hpText">5/5</b><div class="life"><i id="hpFill" style="width:100%"></i></div></div>
+      <div class="hudBox"><small>ESSÊNCIA</small><b id="essText">0</b></div>
+      <div class="hudBox"><small>PISTAS</small><b id="clueText">0/3</b></div>
+      <div class="hudBox"><small>CASO</small><b id="caseText">01</b></div>
+    </div>
+    <div class="bossbar" id="bossBar"><div class="bossline"><span id="bossName">CHEFE</span><span id="bossPhase">FASE 1</span></div><div class="bossHp"><i id="bossFill"></i></div></div>
+    <div class="objective" id="objective">← → mover • ⤒ pular • ✦ relíquia (mira assistida)</div>
+    <div class="toast" id="toast"></div>
+    <div class="controls" id="controls">
+      <div class="pad" id="movePad"><button class="ctl" data-key="left" tabindex="-1">←</button><button class="ctl" data-key="right" tabindex="-1">→</button></div>
+      <div class="acts"><button class="ctl shoot" data-key="shoot"><span>✦</span></button><button class="ctl jump" data-key="jump">⤒</button></div>
+    </div>
+    <div class="overlay on" id="overlay"><section class="card" id="panel"></section></div>
+    <div class="orient" id="orient"><div><b>Vire o iPhone para jogar melhor</b><p>Funciona em pé também, mas no modo paisagem você vê mais da fase.</p></div></div>
+  </main>
+</div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('game'),ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
+const stage=$('stage'),overlay=$('overlay'),panel=$('panel'),objective=$('objective'),toastEl=$('toast'),bossBar=$('bossBar');
+const SAVE_KEY='arquivo13_save_v2';
+const THEMES=[
+ {sky1:'#25184a',sky2:'#0b1228',far:'#15173a',mid:'#12182e',ground:'#16231c',edge:'#456348',accent:'#b18cff',moon:'#d9c7ff',fog:'#3a3e74'},
+ {sky1:'#0b2941',sky2:'#09111d',far:'#0d2633',mid:'#10202a',ground:'#1b2522',edge:'#4d6659',accent:'#77d6ff',moon:'#bce9ff',fog:'#2a5665'},
+ {sky1:'#2b1a18',sky2:'#0f1218',far:'#251c1f',mid:'#1b2025',ground:'#24231a',edge:'#7b6b38',accent:'#ffd36b',moon:'#f3d39e',fog:'#6b4a39'},
+ {sky1:'#301526',sky2:'#0b0d16',far:'#221326',mid:'#181423',ground:'#211a22',edge:'#65404f',accent:'#ff7ca8',moon:'#ffc6d8',fog:'#5f334c'},
+ {sky1:'#1d1435',sky2:'#06070f',far:'#150f2c',mid:'#121226',ground:'#171b20',edge:'#6d577b',accent:'#d4a6ff',moon:'#efe1ff',fog:'#4b3d67'}
+];
+const CASES=[
+ {title:'O Sino da Capela',sub:'Cemitério de São Jerônimo',story:'Três pessoas ouviram um sino tocar numa capela abandonada. Nenhuma delas voltou para casa.',boss:'Sacristão Oco',bossType:'warden',theme:0,length:4300,goal:'Encontre 3 pistas e atravesse a capela.'},
+ {title:'Plataforma Seis',sub:'Estação ferroviária desativada',story:'Um trem inexistente chega sempre às 02:17. Quem em
