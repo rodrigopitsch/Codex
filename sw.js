@@ -1,10 +1,11 @@
-const CACHE='sala-jogos-offline-v12';
+const CACHE='sala-jogos-offline-v13';
 const A13_PARTS=['./a13v3/part00.txt','./a13v3/part01.txt','./a13v3/part02.txt','./a13v3/part03.txt','./a13v3/part04.txt','./a13v3/part05.txt','./a13v3/part06.txt','./a13v3/part07.txt'];
-const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./hunt.html','./arquivo13.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg',...A13_PARTS];
-async function cacheFiles(){const c=await caches.open(CACHE);await Promise.allSettled(FILES.map(async u=>{try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}}))}
+const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./hunt.html','./arquivo13.html','./occult-trail.html','./hunt-v3.css','./hunt-v3.js','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg','./sw.js',...A13_PARTS];
+async function fetchAndStore(c,u){const r=await fetch(u,{cache:'reload'});if(!r||!r.ok)throw new Error('Falha offline: '+u);await c.put(u,r.clone())}
+async function cacheFiles(){const c=await caches.open(CACHE);await Promise.all(FILES.map(u=>fetchAndStore(c,u)))}
 self.addEventListener('install',e=>e.waitUntil(cacheFiles().then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-async function a13v3(){const c=await caches.open(CACHE),chunks=[];for(const u of A13_PARTS){let r=await c.match(u,{ignoreSearch:true});if(!r){try{r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}}if(!r||!r.ok)throw new Error('Arquivo 13 v3 incompleto');chunks.push(await r.text())}return new Response(chunks.join(''),{status:200,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}})}
+async function a13v3(){const c=await caches.open(CACHE),chunks=[];for(const u of A13_PARTS){let r=await c.match(u,{ignoreSearch:true});if(!r){r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}if(!r||!r.ok)throw new Error('Arquivo 13 v3 incompleto');chunks.push(await r.text())}return new Response(chunks.join(''),{status:200,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}})}
 async function enhance(response,url){if(!response)return response;const path=url.pathname;const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|poker|ritual13|hunt|arquivo13|occult-trail)\.html$/.test(path);if(!isGame)return response;let html=await response.text();
  if(!path.endsWith('/poker.html')&&!path.endsWith('/arquivo13.html')&&!path.endsWith('/ritual13.html')){
   if(!html.includes('v5-social.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v5-social.css"></head>');
