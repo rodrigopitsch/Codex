@@ -13,12 +13,17 @@ const box=document.getElementById('offline'),txt=document.getElementById('offtxt
 async function setupOffline(){
  if(!('serviceWorker'in navigator)){box.classList.add('bad');txt.textContent='Este navegador não permite o modo offline.';return}
  try{
-   await navigator.serviceWorker.register('./sw.js');
+   const reg=await navigator.serviceWorker.register('./sw.js');
+   if(reg.installing){
+     await new Promise((ok,fail)=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='activated')ok();if(w.state==='redundant')fail(new Error('sw'))})});
+   }
    await navigator.serviceWorker.ready;
-   const names=await caches.keys();
-   if(names.some(n=>n.startsWith('sala-jogos-offline-'))){box.classList.add('ready');txt.textContent='✓ Offline pronto — pode desligar a internet.'}
-   else txt.textContent='Cache instalado. Abra novamente para confirmar o offline.';
- }catch(e){box.classList.add('bad');txt.textContent='Não consegui preparar o offline. Recarregue com internet uma vez.'}
+   const cache=await caches.open('sala-jogos-offline-v2');
+   const expected=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html'];
+   const stored=await Promise.all(expected.map(u=>cache.match(u)));
+   if(stored.every(Boolean)){box.classList.add('ready');txt.textContent='✓ Offline pronto — os 5 jogos estão salvos. Pode desligar a internet.'}
+   else{box.classList.add('bad');txt.textContent='O pacote offline ainda está incompleto. Recarregue esta página com internet.'}
+ }catch(e){box.classList.add('bad');txt.textContent='Não consegui preparar o offline. Recarregue esta página com internet.'}
 }
 setupOffline();
 </script></body></html>
