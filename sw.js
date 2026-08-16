@@ -1,14 +1,25 @@
-const CACHE='sala-jogos-offline-v5';
+const CACHE='sala-jogos-offline-v6';
 const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./manifest.webmanifest','./icon.svg'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
+
+async function cacheFiles(){
+  const c=await caches.open(CACHE);
+  await Promise.allSettled(FILES.map(async u=>{
+    try{
+      const r=await fetch(u,{cache:'reload'});
+      if(r&&r.ok)await c.put(u,r.clone());
+    }catch(e){}
+  }));
+}
+
+self.addEventListener('install',e=>e.waitUntil(cacheFiles().then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+
 async function enhance(response,url){
   if(!response)return response;
   const path=url.pathname;
   const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|hunt|occult-trail)\.html$/.test(path);
   if(!isGame)return response;
   let html=await response.text();
-  if(path.endsWith('/index.html'))html=html.replaceAll('sala-jogos-offline-v3','sala-jogos-offline-v5');
   if(!html.includes('v5-social.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v5-social.css"></head>');
   if(!html.includes('v5-social.js'))html=html.replace('</body>','<script src="./v5-social.js"></script></body>');
   if(path.endsWith('/hunt.html')||path.endsWith('/occult-trail.html')){
@@ -18,17 +29,34 @@ async function enhance(response,url){
   const headers=new Headers(response.headers);headers.set('content-type','text/html; charset=utf-8');
   return new Response(html,{status:response.status,statusText:response.statusText,headers});
 }
+
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const url=new URL(e.request.url);
   if(e.request.mode==='navigate'){
     e.respondWith((async()=>{
-      let r;
-      try{r=await fetch(e.request);if(r&&r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}}
-      catch(err){r=await caches.match(e.request)||await caches.match('./index.html')}
+      let r=null;
+      try{
+        r=await fetch(e.request);
+        if(r&&r.ok){const c=await caches.open(CACHE);await c.put(url.pathname.endsWith('/')?'./index.html':'.'+url.pathname.substring(url.pathname.lastIndexOf('/')),r.clone()).catch(()=>{});}
+      }catch(err){}
+      if(!r||!r.ok){
+        const c=await caches.open(CACHE);
+        const file='.'+url.pathname.substring(url.pathname.lastIndexOf('/'));
+        r=await c.match(file)||await c.match('./index.html');
+      }
       return enhance(r,url);
     })());
     return;
   }
-  e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(r=>{const x=r.clone();caches.open(CACHE).then(c=>c.put(e.request,x));return r})));
+  e.respondWith((async()=>{
+    const c=await caches.open(CACHE);
+    const hit=await c.match(e.request,{ignoreSearch:true});
+    if(hit)return hit;
+    try{
+      const r=await fetch(e.request);
+      if(r&&r.ok)await c.put(e.request,r.clone()).catch(()=>{});
+      return r;
+    }catch(err){return new Response('',{status:504,statusText:'Offline'})}
+  })());
 });
