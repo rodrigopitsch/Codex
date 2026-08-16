@@ -8,15 +8,15 @@
 <a class="tile poker" href="./poker.html"><span class="art">A♠</span><span class="copy"><b>Texas Hold’em</b><small>Contra CPU ou 2 jogadores • flop/turn/river • fichas virtuais</small></span><em>›</em></a>
 </div><div class="section">Caçadas</div><div class="list">
 <a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>Jogo de cartas • campanha • evolução • chefes</small></span><em>›</em></a>
-<a class="tile platform" href="./arquivo13.html"><span class="art">✦</span><span class="copy"><b>Arquivo 13 — Caçada 2D</b><small>Plataforma lateral • pulo • relíquia • pistas • chefe</small></span><em>›</em></a>
+<a class="tile platform" href="./arquivo13.html"><span class="art">✦</span><span class="copy"><b>Arquivo 13 — Caçada 2D</b><small>5 casos • plataforma lateral • checkpoints • chefes • evolução</small></span><em>›</em></a>
 <a class="tile hybrid" href="./occult-trail.html"><span class="art">♛</span><span class="copy"><b>Trilha Oculta</b><small>Baralho • campanha • duelo • Royal Flush</small></span><em>›</em></a>
 </div><p class="tip">Você pode jogar enquanto o pacote offline é preparado. Quando a faixa ficar verde, já pode desligar Wi‑Fi e dados móveis.</p></main>
 <script>
-const CACHE='sala-jogos-offline-v10';
+const CACHE='sala-jogos-offline-v11';
 const files=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./hunt.html','./arquivo13.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
 const box=document.getElementById('offline'),txt=document.getElementById('offtxt');
 async function countCached(){try{const c=await caches.open(CACHE),hits=await Promise.all(files.map(x=>c.match(x,{ignoreSearch:true})));return hits.filter(Boolean).length}catch(e){return 0}}
 async function paint(){const n=await countCached();box.classList.remove('ready','partial');if(n===files.length){box.classList.add('ready');txt.textContent='✓ Offline pronto — 7 jogos salvos.'}else if(n>0){box.classList.add('partial');txt.textContent='Offline '+n+'/'+files.length+' arquivos • os jogos já estão liberados.'}else txt.textContent='Jogos liberados. Preparando o modo offline…'}
 async function directCache(){try{const c=await caches.open(CACHE);for(const u of files){try{if(await c.match(u,{ignoreSearch:true}))continue;const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone());await paint()}catch(e){}}}catch(e){}}
-(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=10',{updateViaCache:'none'});reg.update().catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1200);setTimeout(paint,3500)})();
+(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=11',{updateViaCache:'none'});reg.update().catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1200);setTimeout(paint,3500)})();
 </script><script src="./v5-social.js"></script><script src="./v7-ux.js"></script></body></html>
