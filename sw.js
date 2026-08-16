@@ -1,45 +1,17 @@
-const CACHE='sala-jogos-offline-v8';
-const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
-
-async function cacheFiles(){
-  const c=await caches.open(CACHE);
-  await Promise.allSettled(FILES.map(async u=>{
-    try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}
-  }));
-}
+const CACHE='sala-jogos-offline-v9';
+const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
+async function cacheFiles(){const c=await caches.open(CACHE);await Promise.allSettled(FILES.map(async u=>{try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}}))}
 self.addEventListener('install',e=>e.waitUntil(cacheFiles().then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-
-async function enhance(response,url){
-  if(!response)return response;
-  const path=url.pathname;
-  const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|hunt|occult-trail)\.html$/.test(path);
-  if(!isGame)return response;
-  let html=await response.text();
+async function enhance(response,url){if(!response)return response;const path=url.pathname;const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|poker|hunt|occult-trail)\.html$/.test(path);if(!isGame)return response;let html=await response.text();
+ if(!path.endsWith('/poker.html')){
   if(!html.includes('v5-social.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v5-social.css"></head>');
   if(!html.includes('v7-ux.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v7-ux.css"></head>');
-  if(path.endsWith('/hunt.html')&&!html.includes('v8-hunt.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v8-hunt.css"></head>');
   if(!html.includes('v5-social.js'))html=html.replace('</body>','<script src="./v5-social.js"></script></body>');
-  if(path.endsWith('/hunt.html')||path.endsWith('/occult-trail.html')){
-    if(!html.includes('v4-enhance.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v4-enhance.css"></head>');
-    if(!html.includes('v4-enhance.js'))html=html.replace('</body>','<script src="./v4-enhance.js"></script></body>');
-  }
   if(!html.includes('v7-ux.js'))html=html.replace('</body>','<script src="./v7-ux.js"></script></body>');
-  if(path.endsWith('/hunt.html')&&!html.includes('v8-hunt.js'))html=html.replace('</body>','<script src="./v8-hunt.js"></script></body>');
-  const headers=new Headers(response.headers);headers.set('content-type','text/html; charset=utf-8');
-  return new Response(html,{status:response.status,statusText:response.statusText,headers});
-}
-
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  const url=new URL(e.request.url);
-  if(e.request.mode==='navigate'){
-    e.respondWith((async()=>{
-      let r=null;
-      try{r=await fetch(e.request);if(r&&r.ok){const c=await caches.open(CACHE);await c.put(url.pathname.endsWith('/')?'./index.html':'.'+url.pathname.substring(url.pathname.lastIndexOf('/')),r.clone()).catch(()=>{})}}catch(err){}
-      if(!r||!r.ok){const c=await caches.open(CACHE),file='.'+url.pathname.substring(url.pathname.lastIndexOf('/'));r=await c.match(file)||await c.match('./index.html')}
-      return enhance(r,url);
-    })());return;
-  }
-  e.respondWith((async()=>{const c=await caches.open(CACHE),hit=await c.match(e.request,{ignoreSearch:true});if(hit)return hit;try{const r=await fetch(e.request);if(r&&r.ok)await c.put(e.request,r.clone()).catch(()=>{});return r}catch(err){return new Response('',{status:504,statusText:'Offline'})}})());
-});
+ }
+ if(path.endsWith('/hunt.html')&&!html.includes('v8-hunt.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v8-hunt.css"></head>');
+ if(path.endsWith('/hunt.html')||path.endsWith('/occult-trail.html')){if(!html.includes('v4-enhance.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v4-enhance.css"></head>');if(!html.includes('v4-enhance.js'))html=html.replace('</body>','<script src="./v4-enhance.js"></script></body>')}
+ if(path.endsWith('/hunt.html')&&!html.includes('v8-hunt.js'))html=html.replace('</body>','<script src="./v8-hunt.js"></script></body>');
+ const headers=new Headers(response.headers);headers.set('content-type','text/html; charset=utf-8');return new Response(html,{status:response.status,statusText:response.statusText,headers})}
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const url=new URL(e.request.url);if(e.request.mode==='navigate'){e.respondWith((async()=>{let r=null;try{r=await fetch(e.request);if(r&&r.ok){const c=await caches.open(CACHE);await c.put(url.pathname.endsWith('/')?'./index.html':'.'+url.pathname.substring(url.pathname.lastIndexOf('/')),r.clone()).catch(()=>{})}}catch(err){}if(!r||!r.ok){const c=await caches.open(CACHE),file='.'+url.pathname.substring(url.pathname.lastIndexOf('/'));r=await c.match(file)||await c.match('./index.html')}return enhance(r,url)})());return}e.respondWith((async()=>{const c=await caches.open(CACHE),hit=await c.match(e.request,{ignoreSearch:true});if(hit)return hit;try{const r=await fetch(e.request);if(r&&r.ok)await c.put(e.request,r.clone()).catch(()=>{});return r}catch(err){return new Response('',{status:504,statusText:'Offline'})}})())});
