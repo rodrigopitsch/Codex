@@ -1,0 +1,25 @@
+p,py+35);ctx.stroke();// head
+ctx.fillStyle='#d1a181';ctx.strokeStyle='#171417';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px+10,py+8,7,0,Math.PI*2);ctx.fill();ctx.stroke();// hair
+ctx.fillStyle='#2b201d';ctx.beginPath();ctx.arc(px+9,py+5,7,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(px+3,py+4,5,4);// eye
+ctx.fillStyle='#111';ctx.beginPath();ctx.arc(px+(p.dir>0?13:7),py+9,1.2,0,Math.PI*2);ctx.fill();// relic arm
+ctx.strokeStyle='#d1a181';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(px+(p.dir>0?16:4),py+17);ctx.lineTo(px+(p.dir>0?22:-2),py+16+run);ctx.stroke();const rx=px+(p.dir>0?24:-5),ry=py+15+run;ctx.globalAlpha=.22;ctx.fillStyle=t.accent;ctx.beginPath();ctx.arc(rx,ry,8,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#ffe29a';ctx.fillRect(rx-1,ry-5,2,10);ctx.fillRect(rx-4,ry-2,8,2);ctx.restore()}
+function drawVignette(w,h){const g=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.25,w/2,h/2,Math.max(w,h)*.75);g.addColorStop(0,'#0000');g.addColorStop(1,'#0009');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}
+
+function tick(now){const dt=Math.min(.033,(now-last)/1000);last=now;if(state==='play'){updateWorld(dt);if(objectiveTimer>0){objectiveTimer-=dt;if(objectiveTimer<=0)objective.classList.add('hide')}if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)toastEl.classList.remove('on')}}if(state==='play'||state==='pause'||state==='dead')draw();requestAnimationFrame(tick)}
+function keyDown(k){if(k==='left')keys.left=true;if(k==='right')keys.right=true;if(k==='jump'){if(!keys.jump)jumpPressed=true;keys.jump=true}if(k==='shoot'){if(!keys.shoot)shootPressed=true;keys.shoot=true}}
+function keyUp(k){keys[k]=false}
+function bindControls(){
+ const movePad=$('movePad'),lb=document.querySelector('[data-key="left"]'),rb=document.querySelector('[data-key="right"]');let movePointer=null;
+ const setMove=(e)=>{const r=movePad.getBoundingClientRect(),x=e.clientX-r.left,mid=r.width/2,dead=7;keys.left=x<mid-dead;keys.right=x>mid+dead;lb.classList.toggle('on',keys.left);rb.classList.toggle('on',keys.right)};
+ movePad.addEventListener('pointerdown',e=>{e.preventDefault();initAudio();movePointer=e.pointerId;try{movePad.setPointerCapture(e.pointerId)}catch(_){}setMove(e)},{passive:false});
+ movePad.addEventListener('pointermove',e=>{if(e.pointerId===movePointer)setMove(e)},{passive:false});
+ const endMove=e=>{if(movePointer!==null&&e.pointerId!==movePointer)return;keys.left=keys.right=false;lb.classList.remove('on');rb.classList.remove('on');try{if(movePad.hasPointerCapture(e.pointerId))movePad.releasePointerCapture(e.pointerId)}catch(_){}movePointer=null};
+ movePad.addEventListener('pointerup',endMove,{passive:false});movePad.addEventListener('pointercancel',endMove,{passive:false});
+ document.querySelectorAll('[data-key="jump"],[data-key="shoot"]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();initAudio();try{b.setPointerCapture(e.pointerId)}catch(_){}b.classList.add('on');keyDown(k)};const up=e=>{e.preventDefault();b.classList.remove('on');keyUp(k);try{if(b.hasPointerCapture(e.pointerId))b.releasePointerCapture(e.pointerId)}catch(_){}};b.addEventListener('pointerdown',down,{passive:false});b.addEventListener('pointerup',up,{passive:false});b.addEventListener('pointercancel',up,{passive:false})});
+ window.addEventListener('keydown',e=>{const map={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'jump',Space:'jump',KeyW:'jump',KeyJ:'shoot',KeyK:'shoot'};if(map[e.code]){e.preventDefault();keyDown(map[e.code])}});window.addEventListener('keyup',e=>{const map={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'jump',Space:'jump',KeyW:'jump',KeyJ:'shoot',KeyK:'shoot'};if(map[e.code])keyUp(map[e.code])})}
+$('menuBtn').onclick=()=>state==='play'?pause():menu();$('backBtn').onclick=()=>{if(state==='play')pause();else location.href='index.html'};$('soundBtn').onclick=()=>{sound=!sound;$('soundBtn').textContent=sound?'🔊':'🔇';persist();if(sound)initAudio()};$('soundBtn').textContent=sound?'🔊':'🔇';
+window.addEventListener('resize',resize);if(window.visualViewport)visualViewport.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')pause()});preventGestures();bindControls();resize();renderRank();menu();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
