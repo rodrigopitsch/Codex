@@ -1,4 +1,4 @@
-const CACHE='sala-jogos-offline-v13';
+const CACHE='sala-jogos-offline-v14';
 const A13_PARTS=['./a13v3/part00.txt','./a13v3/part01.txt','./a13v3/part02.txt','./a13v3/part03.txt','./a13v3/part04.txt','./a13v3/part05.txt','./a13v3/part06.txt','./a13v3/part07.txt'];
 const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./hunt.html','./arquivo13.html','./occult-trail.html','./hunt-v3.css','./hunt-v3.js','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg','./sw.js',...A13_PARTS];
 async function fetchAndStore(c,u){const r=await fetch(u,{cache:'reload'});if(!r||!r.ok)throw new Error('Falha offline: '+u);await c.put(u,r.clone())}
