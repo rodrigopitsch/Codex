@@ -1,5 +1,5 @@
-const CACHE='sala-jogos-offline-v6';
-const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./manifest.webmanifest','./icon.svg'];
+const CACHE='sala-jogos-offline-v7';
+const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./manifest.webmanifest','./icon.svg'];
 
 async function cacheFiles(){
   const c=await caches.open(CACHE);
@@ -21,11 +21,13 @@ async function enhance(response,url){
   if(!isGame)return response;
   let html=await response.text();
   if(!html.includes('v5-social.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v5-social.css"></head>');
+  if(!html.includes('v7-ux.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v7-ux.css"></head>');
   if(!html.includes('v5-social.js'))html=html.replace('</body>','<script src="./v5-social.js"></script></body>');
   if(path.endsWith('/hunt.html')||path.endsWith('/occult-trail.html')){
     if(!html.includes('v4-enhance.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v4-enhance.css"></head>');
     if(!html.includes('v4-enhance.js'))html=html.replace('</body>','<script src="./v4-enhance.js"></script></body>');
   }
+  if(!html.includes('v7-ux.js'))html=html.replace('</body>','<script src="./v7-ux.js"></script></body>');
   const headers=new Headers(response.headers);headers.set('content-type','text/html; charset=utf-8');
   return new Response(html,{status:response.status,statusText:response.statusText,headers});
 }
