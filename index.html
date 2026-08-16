@@ -6,15 +6,15 @@
 <a class="tile ludo" href="./ludo.html"><span class="art">🎲</span><span class="copy"><b>Ludo</b><small>CPU ou 2–4 jogadores locais • histórico</small></span><em>›</em></a>
 <a class="tile cards" href="./paciencia-trilha.html"><span class="art">🃏</span><span class="copy"><b>Paciência Trilha</b><small>Solo ou duelo local por pontuação</small></span><em>›</em></a>
 </div><div class="section">Caçadas</div><div class="list">
-<a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>Campanha • duelo local • evolução permanente</small></span><em>›</em></a>
+<a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>25 casos • história paralela • tempo opcional • evolução</small></span><em>›</em></a>
 <a class="tile hybrid" href="./occult-trail.html"><span class="art">♛</span><span class="copy"><b>Trilha Oculta</b><small>Baralho • campanha • duelo • Royal Flush</small></span><em>›</em></a>
 </div><p class="tip">Você pode jogar enquanto o pacote offline é preparado. Quando a faixa ficar verde, já pode desligar Wi‑Fi e dados móveis.</p></main>
 <script>
-const CACHE='sala-jogos-offline-v7';
-const files=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./manifest.webmanifest','./icon.svg'];
+const CACHE='sala-jogos-offline-v8';
+const files=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
 const box=document.getElementById('offline'),txt=document.getElementById('offtxt');
 async function countCached(){try{const c=await caches.open(CACHE),hits=await Promise.all(files.map(x=>c.match(x,{ignoreSearch:true})));return hits.filter(Boolean).length}catch(e){return 0}}
-async function paint(){const n=await countCached();box.classList.remove('ready','partial');if(n===files.length){box.classList.add('ready');txt.textContent='✓ Offline pronto — jogos + multiplayer + histórico + UX v7 salvos.'}else if(n>0){box.classList.add('partial');txt.textContent='Offline '+n+'/'+files.length+' arquivos • os jogos já estão liberados.'}else txt.textContent='Jogos liberados. Preparando o modo offline…'}
+async function paint(){const n=await countCached();box.classList.remove('ready','partial');if(n===files.length){box.classList.add('ready');txt.textContent='✓ Offline pronto — jogos + multiplayer + história da Caçada v8 salvos.'}else if(n>0){box.classList.add('partial');txt.textContent='Offline '+n+'/'+files.length+' arquivos • os jogos já estão liberados.'}else txt.textContent='Jogos liberados. Preparando o modo offline…'}
 async function directCache(){try{const c=await caches.open(CACHE);for(const u of files){try{if(await c.match(u,{ignoreSearch:true}))continue;const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone());await paint()}catch(e){}}}catch(e){}}
-(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=7',{updateViaCache:'none'});reg.update().catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1200);setTimeout(paint,3500);})();
+(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=8',{updateViaCache:'none'});reg.update().catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1200);setTimeout(paint,3500);})();
 </script><script src="./v5-social.js"></script><script src="./v7-ux.js"></script></body></html>
