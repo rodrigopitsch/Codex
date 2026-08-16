@@ -1,10 +1,10 @@
-const CACHE='sala-jogos-offline-v9';
-const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./hunt.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
+const CACHE='sala-jogos-offline-v10';
+const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./hunt.html','./arquivo13.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
 async function cacheFiles(){const c=await caches.open(CACHE);await Promise.allSettled(FILES.map(async u=>{try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}}))}
 self.addEventListener('install',e=>e.waitUntil(cacheFiles().then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-async function enhance(response,url){if(!response)return response;const path=url.pathname;const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|poker|hunt|occult-trail)\.html$/.test(path);if(!isGame)return response;let html=await response.text();
- if(!path.endsWith('/poker.html')){
+async function enhance(response,url){if(!response)return response;const path=url.pathname;const isGame=/\/(index|jogo-da-velha|ludo|paciencia-trilha|poker|hunt|arquivo13|occult-trail)\.html$/.test(path);if(!isGame)return response;let html=await response.text();
+ if(!path.endsWith('/poker.html')&&!path.endsWith('/arquivo13.html')){
   if(!html.includes('v5-social.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v5-social.css"></head>');
   if(!html.includes('v7-ux.css'))html=html.replace('</head>','<link rel="stylesheet" href="./v7-ux.css"></head>');
   if(!html.includes('v5-social.js'))html=html.replace('</body>','<script src="./v5-social.js"></script></body>');
