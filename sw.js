@@ -1,4 +1,4 @@
-const CACHE='sala-jogos-offline-v10';
+const CACHE='sala-jogos-offline-v11';
 const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./hunt.html','./arquivo13.html','./occult-trail.html','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg'];
 async function cacheFiles(){const c=await caches.open(CACHE);await Promise.allSettled(FILES.map(async u=>{try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok)await c.put(u,r.clone())}catch(e){}}))}
 self.addEventListener('install',e=>e.waitUntil(cacheFiles().then(()=>self.skipWaiting())));
