@@ -7,14 +7,14 @@
 <a class="tile cards" href="./paciencia-trilha.html"><span class="art">🃏</span><span class="copy"><b>Paciência Trilha</b><small>Solo ou duelo local por pontuação</small></span><em>›</em></a>
 <a class="tile poker" href="./poker.html"><span class="art">A♠</span><span class="copy"><b>Texas Hold’em</b><small>Contra CPU ou 2 jogadores • flop/turn/river • fichas virtuais</small></span><em>›</em></a>
 </div><div class="section">Raciocínio</div><div class="list">
-<a class="tile puzzle" href="./ritual13.html"><span class="art">☾✦</span><span class="copy"><b>Ritual 13 — Linhas do Véu</b><small>Puzzle de padrões • combos • 12 casos • modo Zen</small></span><em>›</em></a>
+<a class="tile puzzle" href="./ritual13.html"><span class="art">☾✦</span><span class="copy"><b>Ritual 13 — Linhas do Véu</b><small>V2 estável • padrões • combos • 12 casos • Zen</small></span><em>›</em></a>
 </div><div class="section">Caçadas</div><div class="list">
 <a class="tile hunt" href="./hunt.html"><span class="art">☠️</span><span class="copy"><b>Oculto: Caçada</b><small>Jogo de cartas • campanha • evolução • chefes</small></span><em>›</em></a>
 <a class="tile platform" href="./arquivo13.html"><span class="art">✦</span><span class="copy"><b>Arquivo 13 — Caçada 2D</b><small>5 casos • plataforma lateral • checkpoints • chefes • evolução</small></span><em>›</em></a>
 <a class="tile hybrid" href="./occult-trail.html"><span class="art">♛</span><span class="copy"><b>Trilha Oculta</b><small>Baralho • campanha • duelo • Royal Flush</small></span><em>›</em></a>
 </div><p class="tip">A faixa só fica verde quando todos os jogos e arquivos necessários estão realmente salvos. Quando aparecer “OFFLINE COMPLETO”, você já pode desligar Wi‑Fi e dados móveis.</p></main>
 <script>
-const CACHE='sala-jogos-offline-v13';
+const CACHE='sala-jogos-offline-v14';
 const A13_PARTS=['./a13v3/part00.txt','./a13v3/part01.txt','./a13v3/part02.txt','./a13v3/part03.txt','./a13v3/part04.txt','./a13v3/part05.txt','./a13v3/part06.txt','./a13v3/part07.txt'];
 const files=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./hunt.html','./arquivo13.html','./occult-trail.html','./hunt-v3.css','./hunt-v3.js','./v4-enhance.css','./v4-enhance.js','./v5-social.css','./v5-social.js','./v7-ux.css','./v7-ux.js','./v8-hunt.css','./v8-hunt.js','./manifest.webmanifest','./icon.svg','./sw.js',...A13_PARTS];
 const box=document.getElementById('offline'),txt=document.getElementById('offtxt');
@@ -22,5 +22,5 @@ async function countCached(){try{const c=await caches.open(CACHE),hits=await Pro
 async function paint(){const n=await countCached();box.classList.remove('ready','partial');if(n===files.length){box.classList.add('ready');txt.textContent='✓ OFFLINE COMPLETO — 8 jogos + todos os arquivos salvos.'}else if(n>0){box.classList.add('partial');txt.textContent='Baixando offline '+n+'/'+files.length+' arquivos… mantenha esta tela aberta.'}else txt.textContent='Jogos liberados. Preparando o pacote offline completo…'}
 async function cacheOne(c,u){if(await c.match(u,{ignoreSearch:true}))return true;for(let i=0;i<3;i++){try{const r=await fetch(u,{cache:'reload'});if(r&&r.ok){await c.put(u,r.clone());return true}}catch(e){}}return false}
 async function directCache(){try{const c=await caches.open(CACHE);for(const u of files){await cacheOne(c,u);await paint()}await paint()}catch(e){await paint()}}
-(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=13',{updateViaCache:'none'});reg.update().catch(()=>{});navigator.serviceWorker.ready.then(()=>paint()).catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1000);setTimeout(paint,3000);setTimeout(paint,7000)})();
+(async()=>{await paint();if('serviceWorker'in navigator){try{const reg=await navigator.serviceWorker.register('./sw.js?v=14',{updateViaCache:'none'});reg.update().catch(()=>{});navigator.serviceWorker.ready.then(()=>paint()).catch(()=>{});}catch(e){}}directCache();setTimeout(paint,1000);setTimeout(paint,3000);setTimeout(paint,7000)})();
 </script><script src="./v5-social.js"></script><script src="./v7-ux.js"></script></body></html>
