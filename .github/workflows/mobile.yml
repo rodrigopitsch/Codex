@@ -54,26 +54,28 @@ jobs:
           set -euo pipefail
           SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
           AVDMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name avdmanager | head -n 1)
+          ADB="$ANDROID_HOME/platform-tools/adb"
           test -x "$SDKMANAGER"
           test -x "$AVDMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" 'platform-tools' 'emulator' 'system-images;android-35;google_apis;x86_64'
+          test -x "$ADB"
           echo no | "$AVDMANAGER" create avd --force --name sala13-ci --package 'system-images;android-35;google_apis;x86_64'
           "$ANDROID_HOME/emulator/emulator" -avd sala13-ci -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect >/tmp/emulator.log 2>&1 &
-          adb wait-for-device
+          "$ADB" wait-for-device
           for i in {1..90}; do
-            if [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then break; fi
+            if [ "$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then break; fi
             sleep 2
           done
-          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
-          adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-          adb shell am force-stop com.rodrigopitsch.sala13
-          adb shell am start -W -n com.rodrigopitsch.sala13/.MainActivity | tee /tmp/start.txt
+          test "$("$ADB" shell getprop sys.boot_completed | tr -d '\r')" = "1"
+          "$ADB" install -r android/app/build/outputs/apk/debug/app-debug.apk
+          "$ADB" shell am force-stop com.rodrigopitsch.sala13
+          "$ADB" shell am start -W -n com.rodrigopitsch.sala13/.MainActivity | tee /tmp/start.txt
           grep -Eq 'Status: ok|ThisTime:' /tmp/start.txt
           sleep 4
-          adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep 'com.rodrigopitsch.sala13'
-          adb exec-out screencap -p > Sala13-Android-smoke.png
-          if adb logcat -d -t 400 | grep -A8 -B3 'FATAL EXCEPTION' | grep -q 'com.rodrigopitsch.sala13'; then
+          "$ADB" shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep 'com.rodrigopitsch.sala13'
+          "$ADB" exec-out screencap -p > Sala13-Android-smoke.png
+          if "$ADB" logcat -d -t 400 | grep -A8 -B3 'FATAL EXCEPTION' | grep -q 'com.rodrigopitsch.sala13'; then
             echo 'Fatal exception detected in Sala 13' >&2
             exit 1
           fi
