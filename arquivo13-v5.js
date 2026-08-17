@@ -38,7 +38,7 @@ const a13V5BaseMakeEnemy=makeEnemy;
 makeEnemy=function(x0,type,i){const e=a13V5BaseMakeEnemy(x0,type,i),p=A13_V5_PROFILE[caseIndex]||A13_V5_PROFILE.at(-1);let hp=p.enemy+(type==='hound'||type==='cultist'?1:0);if(type==='ghost')e.speed=.55*p.speed;else if(type==='hound')e.speed=1.00*p.speed;else if(type==='cultist')e.speed=.62*p.speed;else e.speed=.70*p.speed;e.hp=e.maxHp=Math.max(1,hp);return e};
 
 const a13V5BaseBuild=buildWorld;
-buildWorld=function(){a13V5BaseBuild();const p=A13_V5_PROFILE[caseIndex]||A13_V5_PROFILE.at(-1);if(boss){const bonus=Math.min(8,Math.floor((save.level||1)/4)*2);boss.hp=boss.maxHp=p.boss+bonus}a13RunTime=0;a13TimerPaint=0;a13PaintTimer()};
+buildWorld=function(){a13V5BaseBuild();const p=A13_V5_PROFILE[caseIndex]||A13_V5_PROFILE.at(-1);if(boss){const bonus=Math.min(8,Math.floor((save.level||1)/4)*2);boss.hp=boss.maxHp=p.boss+bonus}checkpointSnapshot=captureWorldState();a13RunTime=0;a13TimerPaint=0;a13PaintTimer()};
 
 const a13V5BaseBoss=updateBoss;
 updateBoss=function(dt){const scale=[1,1,.99,.98,.97,.96,.95,.94,.93,.92,.91,.90,.89][caseIndex]||.89;return a13V5BaseBoss(dt*scale)};
