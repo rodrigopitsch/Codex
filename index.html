@@ -1,20 +1,20 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080d1b"><title>Sala de Jogos — carregando</title><style>html,body{margin:0;width:100%;height:100%;display:grid;place-items:center;background:#080d1b;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{text-align:center;padding:24px}b{display:block;font-size:22px}p{color:#9aa9c3;font-size:12px}</style></head><body><main><b>SALA DE JOGOS</b><p id="msg">Carregando release v24…</p></main><script>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080d1b"><title>Sala de Jogos — carregando</title><style>html,body{margin:0;width:100%;height:100%;display:grid;place-items:center;background:#080d1b;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{text-align:center;padding:24px}b{display:block;font-size:22px}p{color:#9aa9c3;font-size:12px}</style></head><body><main><b>SALA DE JOGOS</b><p id="msg">Carregando release v25…</p></main><script>
 (async()=>{
- const FINAL_FILES=["./index.html", "./index-core.html", "./jogo-da-velha.html", "./jogo-da-velha-core.html", "./ludo.html", "./ludo-core.html", "./paciencia-trilha.html", "./paciencia-trilha-core.html", "./poker.html", "./poker-core.html", "./ritual13.html", "./ritual13-core.html", "./ritual13-v6.css", "./ritual13-v6.js", "./hunt.html", "./hunt-core.html", "./occult-trail.html", "./occult-trail-core.html", "./arquivo13.html", "./arquivo13-v4.js", "./arquivo13-v5.js", "./arquivo13-v6.js", "./v4-enhance.css", "./v4-enhance.js", "./v5-social.css", "./v5-social.js", "./v7-ux.css", "./v7-ux.js", "./v8-hunt.css", "./v8-hunt.js", "./manifest.webmanifest", "./icon.svg"];
+ const FINAL_FILES=["./index.html", "./index-core.html", "./jogo-da-velha.html", "./jogo-da-velha-core.html", "./ludo.html", "./ludo-core.html", "./paciencia-trilha.html", "./paciencia-trilha-core.html", "./poker.html", "./poker-core.html", "./ritual13.html", "./ritual13-core.html", "./ritual13-v6.css", "./ritual13-v6.js", "./hunt.html", "./hunt-core.html", "./occult-trail.html", "./occult-trail-core.html", "./arquivo13.html", "./arquivo13-v4.js", "./arquivo13-v5.js", "./arquivo13-v6.js", "./arquivo13-v7.js", "./v4-enhance.css", "./v4-enhance.js", "./v5-social.css", "./v5-social.js", "./v7-ux.css", "./v7-ux.js", "./v8-hunt.css", "./v8-hunt.js", "./manifest.webmanifest", "./icon.svg"];
  try{
   const r=await fetch('./index-core.html',{cache:'reload'});if(!r||!r.ok)throw new Error('núcleo da sala indisponível');
   let h=await r.text();
-  h=h.split('v17').join('v24');
-  h=h.replace('<span class="ver">v24</span>','<span class="ver">v24</span>');
+  h=h.split('v17').join('v25');
+  h=h.replace('<span class="ver">v25</span>','<span class="ver">v25</span>');
   h=h.replace(/const FILES=\[[^;]+A13_PARTS\];/,`const FILES=${JSON.stringify(FINAL_FILES).replace(/\]$/,',...A13_PARTS]')};`);
   h=h.replace('V6 • 24 casos • ruínas quebráveis • cadeias • Zen com recorde','V6.1 • 24 casos • regras revisadas • Zen com recorde');
   h=h.replace('25 casos • cartas • evolução • chefes','V8 • 25 casos • timer opcional • lore • chefes');
   h=h.replace('25 casos • baralho • combos • Royal Flush','V7 • 25 casos • baralho • combos • Royal Flush');
-  h=h.replace('5 casos • plataforma • checkpoint de mundo • chefes','V6 • 13 casos • morte com escolha • evolução permanente');
+  h=h.replace('5 casos • plataforma • checkpoint de mundo • chefes','V7 • 13 casos • morte com escolha • custos progressivos');
   h=h.replace('</head>','<link rel="stylesheet" href="./v7-ux.css"></head>');
-  const scripts='<script src="./v7-ux.js"></'+'script><script>window.__SALA_RELEASE="v24";if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js?v=24",{updateViaCache:"none"}).catch(()=>{})</'+'script>';
+  const scripts='<script src="./v7-ux.js"></'+'script><script>window.__SALA_RELEASE="v25";if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js?v=25",{updateViaCache:"none"}).catch(()=>{})</'+'script>';
   h=h.replace('</body>',scripts+'</body>');
   document.open();document.write(h);document.close();
- }catch(e){document.getElementById('msg').textContent='Não foi possível carregar a release v24. Reabra conectado.'}
+ }catch(e){document.getElementById('msg').textContent='Não foi possível carregar a release v25. Reabra conectado.'}
 })();
 </script></body></html>
