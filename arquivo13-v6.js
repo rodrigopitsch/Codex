@@ -13,6 +13,11 @@ document.head.appendChild(a13V6Style);
 let a13DeathBaseHint='';
 let a13DeathShown=false;
 
+function a13V6Fmt(sec){
+ sec=Math.max(0,Math.round(Number(sec)||0));
+ const m=Math.floor(sec/60),s=sec%60;
+ return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
 function a13SalvageAmount(){
  const carried=Math.max(0,Number(player?.ess||0));
  return carried>0?Math.ceil(carried*.5):0;
@@ -21,7 +26,6 @@ function a13SalvageAmount(){
 function a13ShowDeathScreen(){
  if(state!=='dead'||a13DeathShown)return;
  a13DeathShown=true;
- a13StopMusic();
  overlay.classList.add('on');
  bossBar.classList.remove('on');
  const salvage=a13SalvageAmount();
@@ -34,7 +38,7 @@ function a13ShowDeathScreen(){
   <h1>Você caiu. O que fazer?</h1>
   <p>A morte agora é uma decisão: continue a investigação imediatamente ou recue, fortaleça o caçador e volte mais preparado.</p>
   <div class="stats">
-   <div class="stat"><b>${a13Fmt(a13RunTime)}</b><small>TEMPO</small></div>
+   <div class="stat"><b>${a13V6Fmt(gameTime)}</b><small>TEMPO</small></div>
    <div class="stat"><b>${player?.ess||0}</b><small>ESSÊNCIA NA MISSÃO</small></div>
    <div class="stat"><b>${save.ess||0}</b><small>ESSÊNCIA NA BASE</small></div>
   </div>
@@ -49,7 +53,6 @@ function a13ShowDeathScreen(){
   overlay.classList.remove('on');
   state='play';
   respawn();
-  a13StartMusic();
   objectiveMsg(hasCheckpoint?'Nova tentativa • checkpoint restaurado.':'Nova tentativa • caso reiniciado.',2.2);
  };
  base.onclick=()=>{
@@ -78,7 +81,6 @@ damage=function(n,fromX){
   state='dead';
   keys.left=keys.right=keys.jump=keys.shoot=false;
   jumpPressed=shootPressed=false;
-  a13StopMusic();
   setTimeout(()=>{if(state==='dead')a13ShowDeathScreen()},420);
  }
 };
