@@ -1,6 +1,6 @@
-const CACHE='sala-jogos-offline-v15';
-const A13_PARTS=["./a13v3/part00.txt", "./a13v3/part01.txt", "./a13v3/part02.txt", "./a13v3/part03.txt", "./a13v3/part04.txt", "./a13v3/part05.txt", "./a13v3/part06.txt", "./a13v3/part07.txt"];
-const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./hunt.html','./arquivo13.html','./occult-trail.html','./v5-social.css','./v5-social.js','./manifest.webmanifest','./icon.svg',...A13_PARTS];
+const CACHE='sala-jogos-offline-v16';
+const A13_PARTS=['./a13v3/part00.txt','./a13v3/part01.txt','./a13v3/part02.txt','./a13v3/part03.txt','./a13v3/part04.txt','./a13v3/part05.txt','./a13v3/part06.txt','./a13v3/part07.txt'];
+const FILES=['./index.html','./jogo-da-velha.html','./ludo.html','./paciencia-trilha.html','./poker.html','./ritual13.html','./ritual13-v6.css','./ritual13-v6.js','./hunt.html','./arquivo13.html','./occult-trail.html','./v5-social.css','./v5-social.js','./manifest.webmanifest','./icon.svg',...A13_PARTS];
 async function getFresh(u){const r=await fetch(u,{cache:'reload'});if(!r||!r.ok)throw new Error('Falha ao baixar '+u);return r}
 async function precache(){const c=await caches.open(CACHE);for(const u of FILES){const r=await getFresh(u);await c.put(u,r.clone())}}
 self.addEventListener('install',e=>e.waitUntil(precache().then(()=>self.skipWaiting())));
