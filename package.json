@@ -1,0 +1,31 @@
+{
+  "name": "sala-13-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Aplicativo Android e iOS da Sala 13, empacotando os jogos web com Capacitor.",
+  "scripts": {
+    "mobile:prepare": "node mobile/prepare.mjs",
+    "mobile:sync": "npm run mobile:prepare && npx cap sync",
+    "mobile:assets": "npx @capacitor/assets generate --assetPath mobile/assets --iconBackgroundColor '#050711' --iconBackgroundColorDark '#050711' --splashBackgroundColor '#050711' --splashBackgroundColorDark '#050711'",
+    "mobile:open:android": "npx cap open android",
+    "mobile:open:ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/haptics": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "esbuild": "^0.25.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
