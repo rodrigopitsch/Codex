@@ -3,116 +3,216 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#17152d">
+<meta name="theme-color" content="#16132e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Ritual 13 — Linhas do Véu</title>
+<title>Ritual 13 — Linhas do Véu V4</title>
 <style>
+:root{--bg:#111126;--panel:#211d3e;--line:#514b79;--txt:#fffaf0;--muted:#b8afca;--accent:#9b72d0;--good:#77e6bd;--warn:#ffd56d}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none}
-html,body{margin:0;width:100%;min-height:100%;background:#111126;color:#fffaf0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none}
-body{min-height:100dvh;overflow:hidden}
-button{font:inherit;color:inherit;touch-action:manipulation}
-.app{height:100dvh;display:flex;flex-direction:column;background:radial-gradient(circle at 50% -10%,#5a3b74,#242043 32%,#111126 72%)}
-header{min-height:58px;display:flex;align-items:center;gap:9px;padding:max(8px,env(safe-area-inset-top)) 10px 7px;background:#15142af2;border-bottom:1px solid #403b64;flex:0 0 auto}
-.back,.sound{width:42px;height:42px;border:1px solid #524d75;background:#252241;border-radius:13px;font-weight:900}.back{font-size:24px}.sound{font-size:18px}
-.title{flex:1;min-width:0}.title b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.title small{font-size:9px;color:#b7afcb}
-.main{min-height:0;flex:1;display:flex;flex-direction:column;align-items:center;padding:7px 8px max(8px,env(safe-area-inset-bottom));gap:7px}
-.hud{width:min(100%,460px);display:grid;grid-template-columns:1.45fr .8fr .8fr .8fr;gap:5px;flex:0 0 auto}
-.box{background:#17152ee8;border:1px solid #514b79;border-radius:11px;padding:6px 7px;min-width:0}.box small{display:block;font-size:7px;color:#aaa2c4;font-weight:900;letter-spacing:.04em}.box b{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar{height:5px;background:#2d2948;border-radius:9px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7edfff,#85f0c4);transition:width .2s}
-.gameRow{width:min(100%,460px);min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:7px;align-items:center}
-.boardWrap{min-width:0;min-height:0;display:grid;place-items:center;height:100%}
-.board{width:min(100%,390px);max-height:100%;aspect-ratio:7/11;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(11,1fr);gap:2px;padding:5px;background:#17152b;border:2px solid #544e78;border-radius:17px;box-shadow:0 15px 40px #0007,inset 0 0 40px #6f55a01f;overflow:hidden}
-.cell{position:relative;min-width:0;min-height:0;border:1px solid #302d50;border-radius:7px;background:#1b1932;display:grid;place-items:center;overflow:hidden}.cell::after{content:"";position:absolute;inset:2px;border-radius:5px;background:linear-gradient(#ffffff10,transparent);pointer-events:none}
-.tile{width:100%;height:100%;display:grid;place-items:center;border-radius:6px;color:#211d39;font-weight:950;font-size:clamp(14px,5.5vw,25px);text-shadow:0 1px #ffffff40;box-shadow:inset 0 -4px #0002,0 0 9px var(--glow);transform:scale(.94)}
-.tile.active{outline:2px solid #fff9;transform:scale(.98)}.tile.ghost{opacity:.2;filter:saturate(.7);outline:1px dashed #fff7}.tile.flash{animation:pop .22s ease-in-out 2 alternate}
-.t0{background:linear-gradient(#d4c7ff,#a48ae9);--glow:#b9a5ff88}.t1{background:linear-gradient(#fff0ae,#e2bd57);--glow:#ffe28a88}.t2{background:linear-gradient(#b5f2ff,#5ec4df);--glow:#82e5ff88}.t3{background:linear-gradient(#baf7d3,#64c999);--glow:#8ef0bd88}.t4{background:linear-gradient(#ffc2d5,#e16f9c);--glow:#ff9fc088}
-.side{align-self:stretch;display:flex;flex-direction:column;gap:7px;justify-content:center}.nextBox{padding:7px 4px;border:1px solid #4d4770;border-radius:12px;background:#18162f;text-align:center}.nextBox small{font-size:7px;color:#a9a1bd;font-weight:900}.nextPair{display:grid;gap:4px;margin:5px auto 0;width:38px}.mini{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;color:#211d39;font-size:19px;font-weight:950;box-shadow:inset 0 -3px #0002}.legend{padding:7px 5px;border:1px solid #413b62;border-radius:12px;background:#16142b;text-align:center;color:#bdb5ce;font-size:7px;line-height:1.45}.legend b{color:#fff4b8;font-size:8px}
-.message{width:min(100%,460px);min-height:28px;padding:6px 9px;border:1px solid #454067;border-radius:10px;background:#17152ee6;text-align:center;color:#d2cada;font-size:9px;font-weight:800;display:grid;place-items:center;flex:0 0 auto}.message.good{border-color:#477a68;color:#bcf5df;background:#133129}.message.warn{border-color:#755834;color:#ffe4a4;background:#302313}
-.controls{width:min(100%,460px);display:grid;grid-template-columns:1fr 1.25fr 1fr 1.2fr;gap:7px;flex:0 0 auto}.ctl{min-height:57px;border-radius:17px;border:1px solid #5a5480;background:#292647;font-size:22px;font-weight:950;box-shadow:0 5px 14px #0004}.ctl:active{transform:translateY(2px);filter:brightness(1.15)}.rot{background:#42366a;border-color:#7f6aae}.drop{background:#285046;border-color:#54887c;color:#c6ffeb}.ctl[disabled]{opacity:.35;transform:none}
-.overlay{position:fixed;inset:0;z-index:20;display:none;place-items:center;padding:16px;background:#0a0919e9;overflow:auto;touch-action:pan-y}.overlay.on{display:grid}.card{width:min(100%,480px);padding:18px;border-radius:23px;border:1px solid #514b77;background:linear-gradient(#29254b,#17152f);box-shadow:0 28px 80px #000a}.kick{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:900;color:#e8c5ff}.card h1{margin:5px 0 8px;font-size:27px}.card p{margin:0 0 12px;color:#c4bdd6;font-size:12px;line-height:1.45}.story{padding:10px;border-radius:12px;background:#1b1934;border:1px solid #4c4770;margin:10px 0}.story b{font-size:11px}.story small{display:block;margin-top:4px;color:#b2aac8;font-size:9px;line-height:1.4}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.stat{padding:9px;border-radius:11px;background:#18162e;border:1px solid #47426a;text-align:center}.stat b{display:block;font-size:16px}.stat small{font-size:7px;color:#9e96b6}.btns{display:grid;grid-template-columns:1fr 1.25fr;gap:8px}.btn{min-height:49px;border-radius:13px;border:1px solid #4c476c;background:#24213e;font-weight:900}.primary{border:0;background:linear-gradient(135deg,#9165c6,#5f448e)}.zen{background:#173c35;border-color:#47796c;color:#baf5df}.continue{grid-column:1/-1;background:#283f5f;border-color:#54769e;color:#d9edff}.cases{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:240px;overflow:auto;touch-action:pan-y;margin:10px 0}.case{padding:9px;border:1px solid #47416a;background:#1a1833;border-radius:12px;text-align:left}.case.lock{opacity:.38}.case.current{border-color:#9275bd;background:#292044}.case b{font-size:9px;display:block}.case small{font-size:8px;color:#aaa2bd}.tiny{font-size:8px!important;color:#8f87a5!important;margin:10px 0 0!important;text-align:center}
-@keyframes pop{to{transform:scale(.78);filter:brightness(1.7)}}
-@media(max-height:760px){header{min-height:50px;padding-top:max(4px,env(safe-area-inset-top))}.main{gap:4px}.controls{gap:5px}.ctl{min-height:50px}.message{min-height:24px}.box{padding:4px 6px}.gameRow{grid-template-columns:minmax(0,1fr) 54px}.nextPair{width:32px}.legend{font-size:6px}}
-@media(max-width:370px){.gameRow{grid-template-columns:minmax(0,1fr) 50px}.ctl{font-size:19px}.controls{gap:5px}.title b{font-size:12px}}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none}
+body{min-height:100dvh;background:radial-gradient(circle at 50% -12%,#5b3f78 0,#2c264f 27%,#16132e 58%,#0f1021 100%);padding:max(8px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom));touch-action:manipulation}
+button{font:inherit;color:inherit;touch-action:manipulation}.app{width:min(100%,520px);margin:auto;display:grid;gap:8px}
+.top{display:grid;grid-template-columns:44px 1fr 54px;align-items:center;gap:8px}.back,.sound{height:42px;border:1px solid var(--line);border-radius:13px;background:#262241;font-weight:900}.back{font-size:25px}.sound{font-size:10px}.brand{text-align:center}.brand b{display:block;font-size:15px}.brand small{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+.hud{display:grid;grid-template-columns:1.35fr .75fr .75fr .75fr;gap:5px}.hud>div{padding:7px;border:1px solid #4d476f;border-radius:11px;background:#191730dd}.hud small{display:block;color:#aaa2c4;font-size:7px;font-weight:900}.hud b{display:block;margin-top:1px;font-size:12px}.meter{height:5px;margin-top:4px;background:#302c4d;border-radius:99px;overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,#85dcff,#85efbd)}
+.game{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:start}.boardWrap{position:relative;padding:8px;border:1px solid #4d476f;border-radius:18px;background:linear-gradient(#181631,#121126);box-shadow:0 18px 45px #0007}.board{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;aspect-ratio:7/10}.cell{position:relative;min-width:0;border:1px solid #302c4e;border-radius:9px;background:#0e1022;display:grid;place-items:center;overflow:hidden}.cell::after{content:"";position:absolute;inset:3px;border-radius:6px;border:1px solid #ffffff06}.cell.land{outline:2px solid #fff4;outline-offset:-2px}.tile{width:88%;height:88%;display:grid;place-items:center;border-radius:9px;font-size:clamp(16px,6vw,26px);font-weight:900;color:#28223b;box-shadow:inset 0 2px #ffffff55,0 5px 10px #0004;transform:translateZ(0)}.t0{background:linear-gradient(#d6c7ff,#9e86dd)}.t1{background:linear-gradient(#fff0a7,#e8be54)}.t2{background:linear-gradient(#a9efff,#5ac3df)}.t3{background:linear-gradient(#b4f2cf,#65c796)}.t4{background:linear-gradient(#ffc2d6,#e875a1)}.stone{background:linear-gradient(#817b92,#4b4759);color:#ddd6e8}.clearFlash{animation:pop .18s ease both}@keyframes pop{50%{transform:scale(1.12)}to{transform:scale(.86);opacity:.3}}
+.side{display:grid;gap:7px}.sideBox{padding:8px;border:1px solid #4c466f;border-radius:13px;background:#1a1833}.sideBox small{display:block;color:#aaa2c4;font-size:7px;font-weight:900}.pair{display:flex;justify-content:center;gap:5px;margin-top:6px}.mini{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:#29233b;font-size:16px;font-weight:900;box-shadow:inset 0 2px #ffffff55}.pieceView{min-height:100px;display:grid;place-items:center}.piece{display:grid;gap:4px}.piece.v{grid-template-columns:42px}.piece.h{grid-template-columns:42px 42px}.piece .mini{width:42px;height:42px;font-size:21px}.colLabel{text-align:center;color:#d2cae3;font-size:9px;font-weight:800;margin-top:4px}.tip{padding:7px;border:1px solid #4c466f;border-radius:11px;background:#17152e;color:#c5bdd7;font-size:8px;line-height:1.35}
+.controls{display:grid;grid-template-columns:1fr 1.2fr 1fr 1.35fr;gap:7px}.ctl{min-height:58px;border:1px solid #5a5480;border-radius:16px;background:#292646;font-size:20px;font-weight:900;box-shadow:0 7px 16px #0003}.ctl:active{transform:translateY(2px)}.rotate{background:#443667;border-color:#7e69ad}.drop{background:linear-gradient(135deg,#2b715e,#245044);border-color:#64a28e;color:#e9fff7}.drop small{display:block;font-size:8px;letter-spacing:.05em}
+.toast{position:fixed;z-index:50;left:50%;top:max(70px,calc(env(safe-area-inset-top) + 60px));transform:translate(-50%,-8px);opacity:0;pointer-events:none;padding:8px 12px;border-radius:999px;background:#fff8e9;color:#2c2644;font-size:10px;font-weight:900;transition:.16s}.toast.on{opacity:1;transform:translate(-50%,0)}
+.overlay{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));background:#080817e8;overflow:auto;touch-action:pan-y}.overlay.on{display:grid}.card{width:min(100%,470px);padding:18px;border:1px solid #5b5380;border-radius:23px;background:linear-gradient(#2d2851,#191631);box-shadow:0 28px 80px #000b}.kick{color:#e9caff;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.card h1{margin:4px 0 8px;font-size:27px}.card p{margin:0 0 11px;color:#c5bdd8;font-size:12px;line-height:1.45}.story{padding:10px;border:1px solid #4e4771;border-radius:12px;background:#1b1934}.story b{font-size:11px}.story small{display:block;margin-top:4px;color:#b5acc8;font-size:9px;line-height:1.4}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.stat{padding:9px;border:1px solid #4d466d;border-radius:11px;background:#17152d;text-align:center}.stat b{display:block;font-size:16px}.stat small{font-size:7px;color:#9e96b6}.btns{display:grid;grid-template-columns:1fr 1.2fr;gap:8px}.btn{min-height:49px;border:1px solid #544d76;border-radius:13px;background:#25213f;font-weight:900}.primary{border:0;background:linear-gradient(135deg,#9a68c7,#604591)}.zen{background:#173c35;border-color:#47796c;color:#baf5df}.resume{grid-column:1/-1;background:#263c62;border-color:#5c7fb3}.cases{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:260px;overflow:auto;touch-action:pan-y;margin:10px 0}.case{padding:9px;border:1px solid #4c456d;border-radius:11px;background:#1a1833;text-align:left}.case.lock{opacity:.35}.case.current{border-color:#a97ad3;background:#2c2146}.case b{display:block;font-size:9px}.case small{display:block;margin-top:3px;color:#aca4be;font-size:8px}.case em{display:block;margin-top:3px;color:#ffe48a;font-style:normal;font-size:8px}.help{margin-top:10px;color:#9189a8;font-size:8px;line-height:1.45;text-align:center}
+@media(max-width:390px){.game{grid-template-columns:1fr 80px;gap:6px}.piece.v{grid-template-columns:36px}.piece.h{grid-template-columns:36px 36px}.piece .mini{width:36px;height:36px}.controls{gap:5px}.ctl{min-height:54px;font-size:18px}.hud b{font-size:10px}}
 </style>
 </head>
 <body>
-<div class="app">
-<header><button class="back" id="back" aria-label="Voltar">‹</button><div class="title"><b>RITUAL 13 — LINHAS DO VÉU</b><small>puzzle sobrenatural • sem canvas • progresso local</small></div><button class="sound" id="sound" aria-label="Som">♪</button></header>
-<main class="main">
-<div class="hud"><div class="box"><small>OBJETIVO</small><b id="goal">0 / 650</b><div class="bar"><i id="goalbar"></i></div></div><div class="box"><small>PONTOS</small><b id="score">0</b></div><div class="box"><small>CADEIA</small><b id="chain">×1</b></div><div class="box"><small>RITUAIS</small><b id="rituals">0</b></div></div>
-<div class="gameRow"><div class="boardWrap"><div class="board" id="board" aria-label="Tabuleiro"></div></div><aside class="side"><div class="nextBox"><small>PRÓXIMA</small><div class="nextPair" id="nextPair"></div></div><div class="legend"><b>4 iguais</b><br>limpam<br><br><b>2×2</b><br>Ritual</div></aside></div>
-<div class="message" id="message">Escolha um caso para começar.</div>
-<div class="controls"><button class="ctl" data-a="left" aria-label="Esquerda">←</button><button class="ctl rot" data-a="rotate" aria-label="Girar">↻</button><button class="ctl" data-a="right" aria-label="Direita">→</button><button class="ctl drop" data-a="drop" aria-label="Soltar">⇣</button></div>
+<main class="app">
+ <div class="top"><button class="back" id="back" aria-label="Voltar">‹</button><div class="brand"><b>RITUAL 13 — LINHAS DO VÉU</b><small>V4 • puzzle por turnos • sem canvas • offline</small></div><button class="sound" id="sound">SOM ON</button></div>
+ <div class="hud"><div><small>OBJETIVO</small><b id="goal">0 / 650</b><div class="meter"><i id="goalbar"></i></div></div><div><small>PONTOS</small><b id="score">0</b></div><div><small>CADEIA</small><b id="chain">×1</b></div><div><small>RITUAIS</small><b id="rituals">0</b></div></div>
+ <section class="game">
+  <div class="boardWrap"><div class="board" id="board"></div></div>
+  <aside class="side">
+   <div class="sideBox"><small>PEÇA ATUAL</small><div class="pieceView" id="pieceView"></div><div class="colLabel" id="colLabel">coluna 4</div></div>
+   <div class="sideBox"><small>PRÓXIMA</small><div class="pair" id="nextPair"></div></div>
+   <div class="tip">Toque numa coluna ou use ← →. Gire e depois <b>SOLTE</b>. 4 iguais conectados somem. Um quadrado 2×2 igual limpa aquela família inteira.</div>
+  </aside>
+ </section>
+ <div class="controls"><button class="ctl" data-act="left">←</button><button class="ctl rotate" data-act="rotate">↻</button><button class="ctl" data-act="right">→</button><button class="ctl drop" data-act="drop">⇣<small>SOLTAR</small></button></div>
 </main>
-</div>
+<div class="toast" id="toast"></div>
 <div class="overlay on" id="overlay"><div class="card" id="card"></div></div>
 <script>
 (function(){
 'use strict';
-var COLS=7,ROWS=11,STORE='ritual13V4Progress',ROUND='ritual13V4Round';
-var TYPES=[{g:'☾',name:'Lua'},{g:'✦',name:'Estrela'},{g:'◉',name:'Olho'},{g:'♧',name:'Folha'},{g:'◇',name:'Cristal'}];
+var COLS=7, ROWS=10, PROFILE='ritual13V4Profile', ROUND='ritual13V4Round';
+var TYPES=[
+ {g:'☾',name:'Lua',cls:'t0'},
+ {g:'✦',name:'Estrela',cls:'t1'},
+ {g:'◉',name:'Olho',cls:'t2'},
+ {g:'♧',name:'Folha',cls:'t3'},
+ {g:'◇',name:'Cristal',cls:'t4'}
+];
 var CASES=[
-{name:'O Jardim que Sussurra',story:'Luzes aparecem entre as flores. Comece juntando apenas Lua e Estrela.',target:450,colors:2,rit:0,speed:1050},
-{name:'Luzes no Lago',story:'O reflexo muda quando os símbolos se encontram.',target:650,colors:3,rit:0,speed:1000},
-{name:'A Estação sem Relógio',story:'Os relógios pararam às 03:13. Um quadrado perfeito reativa o painel.',target:850,colors:3,rit:1,speed:960},
-{name:'Casa das Janelas Azuis',story:'As janelas repetem padrões que só se estabilizam com um Ritual.',target:1050,colors:4,rit:1,speed:920},
-{name:'O Quarto das Plantas',story:'As folhas crescem em grupos e respondem a reações em cadeia.',target:1300,colors:4,rit:1,speed:880},
-{name:'Cinema Aurora',story:'O filme sem atores termina quando dois Rituais aparecem.',target:1550,colors:4,rit:2,speed:840},
-{name:'O Elevador 13',story:'Cada cadeia parece empurrar o elevador um andar acima.',target:1800,colors:5,rit:1,speed:800},
-{name:'Biblioteca das Margens',story:'Símbolos nas margens dos livros se agrupam sozinhos.',target:2100,colors:5,rit:2,speed:770},
-{name:'A Rua que Volta',story:'O caminho retorna ao início até um circuito perfeito ser fechado.',target:2400,colors:5,rit:2,speed:740},
-{name:'Observatório Vazio',story:'O telescópio aponta para dentro do prédio. Os sinais aceleram.',target:2750,colors:5,rit:2,speed:710},
-{name:'O Salão de Vidro',story:'Cada reação em cadeia ilumina uma nova parte do mapa.',target:3150,colors:5,rit:3,speed:680},
-{name:'Linha Zero',story:'Todos os casos apontam para o mesmo desenho. Feche a última linha.',target:3600,colors:5,rit:3,speed:650}];
+ {name:'O Jardim que Sussurra',story:'Luzes surgem entre as flores depois da meia-noite. Organize os primeiros sinais.',target:500,colors:2,rit:0,stones:0},
+ {name:'Luzes no Lago',story:'Reflexos aparecem onde não há estrelas. As linhas começam a se repetir.',target:750,colors:3,rit:0,stones:0},
+ {name:'A Estação sem Relógio',story:'Todos os relógios pararam às 03:13. Um quadrado perfeito parece destravar o painel.',target:950,colors:3,rit:1,stones:0},
+ {name:'Casa das Janelas Azuis',story:'As janelas mudam de lugar. Fechar um Ritual mantém a casa no mesmo endereço.',target:1200,colors:3,rit:1,stones:1},
+ {name:'O Quarto das Plantas',story:'Folhas formam padrões impossíveis nas paredes. Agora há mais famílias de símbolos.',target:1450,colors:4,rit:1,stones:2},
+ {name:'Cinema Aurora',story:'A tela projeta apenas formas e cores. Reações em cadeia avançam o filme.',target:1700,colors:4,rit:1,stones:2},
+ {name:'O Elevador 13',story:'O botão treze não existe, mas acende sozinho. Cada limpeza faz o elevador subir.',target:1950,colors:4,rit:2,stones:3},
+ {name:'Biblioteca das Margens',story:'Notas aparecem nas bordas dos livros. Os sinais querem ser agrupados, não lidos.',target:2200,colors:4,rit:2,stones:3},
+ {name:'A Rua que Volta',story:'Você anda três quarteirões e retorna ao início. Um circuito perfeito abre a saída.',target:2450,colors:5,rit:2,stones:4},
+ {name:'Observatório Vazio',story:'O telescópio aponta para dentro do prédio. As combinações agora exigem espaço.',target:2700,colors:5,rit:2,stones:4},
+ {name:'O Salão de Vidro',story:'Cada cadeia vira luz no teto. O mapa do Véu está quase completo.',target:3000,colors:5,rit:3,stones:5},
+ {name:'Linha Zero',story:'Todos os casos apontam para o mesmo desenho. Feche a última sequência.',target:3400,colors:5,rit:3,stones:5}
+];
 function $(id){return document.getElementById(id)}
-var boardEl=$('board'),overlay=$('overlay'),card=$('card'),messageEl=$('message');
-var board=[],piece=null,nextPair=null,score=0,rituals=0,chain=1,caseIndex=0,playing=false,zen=false,resolving=false,timer=null,sound=true;
-var prog=loadProgress();caseIndex=Math.max(0,Math.min(CASES.length-1,(prog.unlocked||1)-1));sound=prog.sound!==false;
-function defaultProgress(){return{unlocked:1,best:{},stars:{},sound:true,totalRituals:0}}
-function loadProgress(){try{var raw=localStorage.getItem(STORE);if(!raw)return defaultProgress();var x=JSON.parse(raw);var d=defaultProgress();for(var k in x)d[k]=x[k];return d}catch(e){return defaultProgress()}}
-function saveProgress(){prog.sound=sound;try{localStorage.setItem(STORE,JSON.stringify(prog))}catch(e){}}
-function saveRound(){if(!playing||resolving)return;try{localStorage.setItem(ROUND,JSON.stringify({board:board,piece:piece,nextPair:nextPair,score:score,rituals:rituals,chain:chain,caseIndex:caseIndex,zen:zen}))}catch(e){}}
-function getRound(){try{var s=localStorage.getItem(ROUND);return s?JSON.parse(s):null}catch(e){return null}}
-function clearRound(){try{localStorage.removeItem(ROUND)}catch(e){}}
-function tone(freq,dur){if(!sound)return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;var ac=tone.ac||(tone.ac=new AC());var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=freq||420;g.gain.value=.025;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+(dur||.05));o.stop(ac.currentTime+(dur||.05))}catch(e){}}
-function setMessage(txt,type){messageEl.textContent=txt;messageEl.className='message'+(type?' '+type:'')}
-function emptyBoard(){board=[];for(var r=0;r<ROWS;r++){var row=[];for(var c=0;c<COLS;c++)row.push(null);board.push(row)}}
-function randomPair(n){return[Math.floor(Math.random()*n),Math.floor(Math.random()*n)]}
-function offset(o){return[[-1,0],[0,1],[1,0],[0,-1]][o]}
-function pieceCells(p,r,c,o){p=p||piece;if(!p)return[];r=typeof r==='number'?r:p.r;c=typeof c==='number'?c:p.c;o=typeof o==='number'?o:p.o;var d=offset(o);return[{r:r,c:c,t:p.a},{r:r+d[0],c:c+d[1],t:p.b}]}
-function canAt(r,c,o){if(!piece)return false;var cs=pieceCells(piece,r,c,o);for(var i=0;i<cs.length;i++){var q=cs[i];if(q.c<0||q.c>=COLS||q.r>=ROWS)return false;if(q.r>=0&&board[q.r][q.c]!==null)return false}return true}
-function spawn(){var n=zen?5:CASES[caseIndex].colors;var p=nextPair||randomPair(n);nextPair=randomPair(n);piece={a:p[0],b:p[1],r:1,c:3,o:0};if(!canAt(piece.r,piece.c,piece.o)){gameOver();return false}render();saveRound();return true}
-function move(dx){if(!playing||resolving||!piece)return;if(canAt(piece.r,piece.c+dx,piece.o)){piece.c+=dx;tone(230,.025);render();saveRound()}}
-function rotate(){if(!playing||resolving||!piece)return;var no=(piece.o+1)%4;var kicks=[0,-1,1,-2,2];for(var i=0;i<kicks.length;i++){var nc=piece.c+kicks[i];if(canAt(piece.r,nc,no)){piece.c=nc;piece.o=no;tone(390,.035);render();saveRound();return}}}
-function stepDown(){if(!playing||resolving||!piece)return;if(canAt(piece.r+1,piece.c,piece.o)){piece.r++;render();saveRound()}else lockPiece()}
-function hardDrop(){if(!playing||resolving||!piece)return;var dist=0;while(canAt(piece.r+1,piece.c,piece.o)){piece.r++;dist++}score+=dist*2;tone(170,.05);lockPiece()}
-function lockPiece(){if(!piece)return;var cs=pieceCells();for(var i=0;i<cs.length;i++){var q=cs[i];if(q.r<0){gameOver();return}board[q.r][q.c]=q.t}piece=null;render();resolveBoard()}
+var board=[], piece=null, next=null, score=0, rituals=0, chain=1, playing=false, zen=false, caseIndex=0, profile=loadProfile(), sound=profile.sound!==false, toastTimer=0;
+caseIndex=Math.max(0,Math.min(CASES.length-1,(profile.unlocked||1)-1));
+function loadProfile(){
+ var base={unlocked:1,stars:{},best:{},sound:true,totalRituals:0};
+ try{
+  var v=JSON.parse(localStorage.getItem(PROFILE)||'null');
+  if(v) return Object.assign(base,v);
+  var old=JSON.parse(localStorage.getItem('ritual13StableV3')||localStorage.getItem('ritual13StableV2')||'null');
+  if(old){base.unlocked=old.unlocked||1;base.stars=old.stars||{};base.best=old.best||{};base.sound=old.sound!==false;}
+ }catch(e){}
+ return base;
+}
+function saveProfile(){profile.sound=sound;try{localStorage.setItem(PROFILE,JSON.stringify(profile))}catch(e){}}
+function blank(){board=[];for(var r=0;r<ROWS;r++){var row=[];for(var c=0;c<COLS;c++)row.push(null);board.push(row)}}
+function cloneBoard(b){return b.map(function(row){return row.map(function(v){return v?Object.assign({},v):null})})}
+function rnd(n){return Math.floor(Math.random()*n)}
+function newPair(){var colors=zen?5:CASES[caseIndex].colors;return {a:rnd(colors),b:rnd(colors),ori:0,col:3}}
+function addStones(n){var tries=0;while(n>0&&tries<100){tries++;var r=ROWS-1-rnd(3),c=rnd(COLS);if(!board[r][c]){board[r][c]={stone:1};n--}}}
+function normalizePiece(){if(!piece)return;if(piece.ori===1)piece.col=Math.max(0,Math.min(COLS-2,piece.col));else piece.col=Math.max(0,Math.min(COLS-1,piece.col))}
+function landingCells(){
+ if(!piece)return null;normalizePiece();
+ if(piece.ori===0){
+  var first=ROWS;for(var r=0;r<ROWS;r++){if(board[r][piece.col]){first=r;break}}
+  var bottom=first-1,top=bottom-1;if(top<0)return null;
+  return [{r:top,c:piece.col,t:piece.a},{r:bottom,c:piece.col,t:piece.b}];
+ }
+ var c1=piece.col,c2=piece.col+1,first1=ROWS,first2=ROWS;
+ for(var r1=0;r1<ROWS;r1++){if(board[r1][c1]){first1=r1;break}}
+ for(var r2=0;r2<ROWS;r2++){if(board[r2][c2]){first2=r2;break}}
+ var row=Math.min(first1,first2)-1;if(row<0)return null;
+ return [{r:row,c:c1,t:piece.a},{r:row,c:c2,t:piece.b}];
+}
+function move(d){if(!playing||!piece)return;piece.col+=d;normalizePiece();saveRound();render()}
+function rotate(){if(!playing||!piece)return;piece.ori=piece.ori?0:1;normalizePiece();saveRound();render();beep(360)}
+function drop(){
+ if(!playing||!piece)return;var cells=landingCells();if(!cells){gameOver();return}
+ for(var i=0;i<cells.length;i++){var q=cells[i];board[q.r][q.c]={t:q.t}}
+ score+=Math.max(1,ROWS-Math.max(cells[0].r,cells[1].r));
+ resolveBoard();
+ if(!playing)return;
+ piece=next||newPair();next=newPair();normalizePiece();saveRound();render();beep(220);
+}
 function key(r,c){return r+','+c}
-function findGroups(){var seen={},out=[];for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){if(board[r][c]===null||seen[key(r,c)])continue;var t=board[r][c],stack=[[r,c]],group=[];seen[key(r,c)]=1;while(stack.length){var q=stack.pop(),rr=q[0],cc=q[1];group.push(q);var ns=[[rr+1,cc],[rr-1,cc],[rr,cc+1],[rr,cc-1]];for(var i=0;i<ns.length;i++){var nr=ns[i][0],nc=ns[i][1],kk=key(nr,nc);if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!seen[kk]&&board[nr][nc]===t){seen[kk]=1;stack.push([nr,nc])}}}if(group.length>=4)out.push({t:t,cells:group})}return out}
-function findRitualTypes(){var found={};for(var r=0;r<ROWS-1;r++)for(var c=0;c<COLS-1;c++){var a=board[r][c],b=board[r][c+1],d=board[r+1][c],e=board[r+1][c+1];if(a!==null&&a===b&&a===d&&a===e)found[a]=1}var out=[];for(var k in found)out.push(Number(k));return out}
-function gravity(){for(var c=0;c<COLS;c++){var wr=ROWS-1;for(var r=ROWS-1;r>=0;r--){if(board[r][c]!==null){board[wr][c]=board[r][c];if(wr!==r)board[r][c]=null;wr--}}while(wr>=0){board[wr][c]=null;wr--}}}
-function delay(ms){return new Promise(function(resolve){setTimeout(resolve,ms)})}
-async function resolveBoard(){if(resolving)return;resolving=true;disableControls(true);chain=1;var had=false;while(true){var clear={},rits=findRitualTypes(),ritualHit=false;if(rits.length){ritualHit=true;rituals+=rits.length;prog.totalRituals=(prog.totalRituals||0)+rits.length;for(var ri=0;ri<rits.length;ri++){var typ=rits[ri];for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(board[r][c]===typ)clear[key(r,c)]=1}setMessage(rits.length>1?'RITUAL DUPLO!':'RITUAL PERFEITO!','good');tone(720,.12)}else{var groups=findGroups();if(!groups.length)break;for(var gi=0;gi<groups.length;gi++)for(var ci=0;ci<groups[gi].cells.length;ci++){var q=groups[gi].cells[ci];clear[key(q[0],q[1])]=1}}var keys=[];for(var kk in clear)keys.push(kk);if(!keys.length)break;had=true;score+=keys.length*25*chain*(ritualHit?2:1);flashKeys(keys);await delay(120);for(var x=0;x<keys.length;x++){var parts=keys[x].split(',');board[Number(parts[0])][Number(parts[1])]=null}gravity();chain++;render();await delay(130)}resolving=false;disableControls(false);if(had&&chain>2)setMessage('CADEIA ×'+(chain-1)+' — boa leitura!','good');else if(!had)setMessage('Procure quatro iguais conectados ou um quadrado 2×2.');updateHud();if(!zen&&missionDone()){completeCase();return}chain=1;spawn()}
-function flashKeys(keys){render();for(var i=0;i<keys.length;i++){var el=document.querySelector('[data-pos="'+keys[i]+'"] .tile');if(el)el.classList.add('flash')}}
+function ritualTypes(){
+ var set={};for(var r=0;r<ROWS-1;r++)for(var c=0;c<COLS-1;c++){
+  var a=board[r][c],b=board[r][c+1],d=board[r+1][c],e=board[r+1][c+1];
+  if(a&&b&&d&&e&&!a.stone&&!b.stone&&!d.stone&&!e.stone&&a.t===b.t&&a.t===d.t&&a.t===e.t)set[a.t]=1;
+ }
+ return Object.keys(set).map(Number);
+}
+function groups(){
+ var seen={},out=[];
+ for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+  var v=board[r][c],k=key(r,c);if(!v||v.stone||seen[k])continue;
+  var t=v.t,q=[[r,c]],g=[];seen[k]=1;
+  while(q.length){var cur=q.pop(),rr=cur[0],cc=cur[1];g.push(cur);var dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+   for(var i=0;i<dirs.length;i++){var nr=rr+dirs[i][0],nc=cc+dirs[i][1],nk=key(nr,nc);if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!seen[nk]&&board[nr][nc]&&!board[nr][nc].stone&&board[nr][nc].t===t){seen[nk]=1;q.push([nr,nc])}}
+  }
+  if(g.length>=4)out.push(g);
+ }
+ return out;
+}
+function gravity(){
+ for(var c=0;c<COLS;c++){
+  var wr=ROWS-1;
+  for(var r=ROWS-1;r>=0;r--){if(board[r][c]){if(wr!==r){board[wr][c]=board[r][c];board[r][c]=null}wr--}}
+  while(wr>=0){board[wr][c]=null;wr--}
+ }
+}
+function resolveBoard(){
+ chain=1;var did=false,guard=0;
+ while(guard++<20){
+  var clear={},rits=ritualTypes(),ritual=false;
+  if(rits.length){ritual=true;rituals+=rits.length;profile.totalRituals=(profile.totalRituals||0)+rits.length;
+   for(var x=0;x<rits.length;x++){var t=rits[x];for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(board[r][c]&&!board[r][c].stone&&board[r][c].t===t)clear[key(r,c)]=1}
+   show(rits.length>1?'RITUAL DUPLO!':'RITUAL PERFEITO!');beep(700);
+  }else{
+   var gs=groups();if(!gs.length)break;for(var gi=0;gi<gs.length;gi++)for(var j=0;j<gs[gi].length;j++)clear[key(gs[gi][j][0],gs[gi][j][1])]=1;
+  }
+  var ks=Object.keys(clear);if(!ks.length)break;did=true;score+=ks.length*25*chain*(ritual?2:1);
+  for(var i=0;i<ks.length;i++){var p=ks[i].split(','),rr=+p[0],cc=+p[1];board[rr][cc]=null}
+  gravity();chain++;
+ }
+ if(did&&chain>2)show('CADEIA ×'+(chain-1));
+ saveProfile();
+ if(!zen&&missionDone()){complete();return}
+ chain=1;
+}
 function missionDone(){var c=CASES[caseIndex];return score>=c.target&&rituals>=c.rit}
-function completeCase(){playing=false;stopTimer();clearRound();var c=CASES[caseIndex],stars=score>=c.target*1.7?3:score>=c.target*1.3?2:1;prog.best[caseIndex]=Math.max(prog.best[caseIndex]||0,score);prog.stars[caseIndex]=Math.max(prog.stars[caseIndex]||0,stars);prog.unlocked=Math.max(prog.unlocked,Math.min(CASES.length,caseIndex+2));saveProgress();overlay.classList.add('on');card.innerHTML='<div class="kick">caso estabilizado</div><h1>'+c.name+'</h1><p>'+'★'.repeat(stars)+'☆'.repeat(3-stars)+' — Você encontrou o padrão.</p><div class="stats"><div class="stat"><b>'+score+'</b><small>PONTOS</small></div><div class="stat"><b>'+rituals+'</b><small>RITUAIS</small></div><div class="stat"><b>'+(chain>1?chain-1:1)+'</b><small>CADEIA</small></div></div><div class="btns"><button class="btn" id="menuBtn">CASOS</button><button class="btn primary" id="nextBtn">PRÓXIMO</button></div>';$('menuBtn').onclick=menu;$('nextBtn').onclick=function(){caseIndex=Math.min(caseIndex+1,prog.unlocked-1);startGame(false)}}
-function gameOver(){playing=false;stopTimer();clearRound();overlay.classList.add('on');card.innerHTML='<div class="kick">sem espaço</div><h1>O Véu fechou.</h1><p>Não perdeu progresso da campanha. Abra espaço com grupos de quatro ou use um Ritual 2×2.</p><div class="stats"><div class="stat"><b>'+score+'</b><small>PONTOS</small></div><div class="stat"><b>'+rituals+'</b><small>RITUAIS</small></div><div class="stat"><b>'+CASES[caseIndex].target+'</b><small>ALVO</small></div></div><div class="btns"><button class="btn" id="menuBtn">CASOS</button><button class="btn primary" id="retryBtn">TENTAR DE NOVO</button></div>';$('menuBtn').onclick=menu;$('retryBtn').onclick=function(){startGame(zen)}}
-function startTimer(){stopTimer();timer=setInterval(function(){stepDown()},zen?950:CASES[caseIndex].speed)}
-function stopTimer(){if(timer){clearInterval(timer);timer=null}}
-function startGame(isZen){zen=!!isZen;score=0;rituals=0;chain=1;resolving=false;emptyBoard();piece=null;nextPair=null;playing=true;overlay.classList.remove('on');disableControls(false);spawn();setMessage(zen?'Modo Zen: sem meta e sem pressa.':'Caso '+(caseIndex+1)+': '+CASES[caseIndex].name);updateHud();startTimer();saveRound()}
-function resumeGame(){var s=getRound();if(!s)return menu();try{board=s.board;piece=s.piece;nextPair=s.nextPair;score=s.score||0;rituals=s.rituals||0;chain=s.chain||1;caseIndex=Math.max(0,Math.min(CASES.length-1,s.caseIndex||0));zen=!!s.zen;if(!Array.isArray(board)||board.length!==ROWS)throw new Error('round');playing=true;resolving=false;overlay.classList.remove('on');disableControls(false);setMessage('Rodada restaurada exatamente do último movimento.','good');render();updateHud();startTimer()}catch(e){clearRound();startGame(false)}}
-function menu(){playing=false;stopTimer();overlay.classList.add('on');render();var total=0;for(var k in prog.stars)total+=Number(prog.stars[k])||0;var round=getRound();var html='<div class="kick">puzzle sobrenatural de padrões</div><h1>Ritual 13</h1><p>Junte <b>4 símbolos iguais conectados</b>. Um quadrado <b>2×2</b> cria um Ritual e limpa aquela família inteira.</p><div class="story"><b>'+CASES[caseIndex].name+'</b><small>'+CASES[caseIndex].story+'</small></div><div class="stats"><div class="stat"><b>'+prog.unlocked+'</b><small>CASOS</small></div><div class="stat"><b>'+total+'</b><small>ESTRELAS</small></div><div class="stat"><b>'+(prog.totalRituals||0)+'</b><small>RITUAIS</small></div></div><div class="btns"><button class="btn zen" id="zenBtn">MODO ZEN</button><button class="btn primary" id="playBtn">JOGAR CASO</button>'+(round?'<button class="btn continue" id="continueBtn">▶ CONTINUAR RODADA</button>':'')+'</div><div class="cases">';for(var i=0;i<CASES.length;i++){var locked=i>=prog.unlocked;html+='<button class="case '+(locked?'lock ':'')+(i===caseIndex?'current':'')+'" data-i="'+i+'" '+(locked?'disabled':'')+'><b>'+String(i+1).padStart(2,'0')+' • '+CASES[i].name+'</b><small>'+CASES[i].target+' pts'+(CASES[i].rit?' • '+CASES[i].rit+' ritual'+(CASES[i].rit>1?'s':''):'')+'</small></button>'}html+='</div><p class="tiny">V4: tabuleiro HTML, sem canvas. O jogo salva a rodada depois de cada movimento.</p>';card.innerHTML=html;$('playBtn').onclick=function(){startGame(false)};$('zenBtn').onclick=function(){startGame(true)};if($('continueBtn'))$('continueBtn').onclick=resumeGame;var buttons=card.querySelectorAll('.case:not(.lock)');for(var j=0;j<buttons.length;j++)buttons[j].onclick=function(){caseIndex=Number(this.getAttribute('data-i'));menu()}}
-function updateHud(){var target=zen?0:CASES[caseIndex].target;$('score').textContent=score;$('chain').textContent='×'+Math.max(1,chain-1);$('rituals').textContent=rituals;$('goal').textContent=zen?'ZEN':score+' / '+target;$('goalbar').style.width=zen?'0%':Math.min(100,score/target*100)+'%';renderNext()}
-function ghostCells(){if(!piece)return[];var rr=piece.r;while(canAt(rr+1,piece.c,piece.o))rr++;return pieceCells(piece,rr,piece.c,piece.o)}
-function render(){var active={},ghost={};if(piece){var cs=pieceCells();for(var i=0;i<cs.length;i++)if(cs[i].r>=0)active[key(cs[i].r,cs[i].c)]=cs[i].t;var gs=ghostCells();for(var g=0;g<gs.length;g++)if(gs[g].r>=0)ghost[key(gs[g].r,gs[g].c)]=gs[g].t}var frag=document.createDocumentFragment();for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){var cell=document.createElement('div');cell.className='cell';cell.setAttribute('data-pos',key(r,c));var val=board[r]&&board[r][c]!==undefined?board[r][c]:null;var kk=key(r,c),typ=null,cls='';if(Object.prototype.hasOwnProperty.call(active,kk)){typ=active[kk];cls=' active'}else if(val!==null){typ=val}else if(Object.prototype.hasOwnProperty.call(ghost,kk)){typ=ghost[kk];cls=' ghost'}if(typ!==null){var t=document.createElement('div');t.className='tile t'+typ+cls;t.textContent=TYPES[typ].g;cell.appendChild(t)}frag.appendChild(cell)}boardEl.innerHTML='';boardEl.appendChild(frag);updateHud()}
-function renderNext(){var el=$('nextPair');if(!el)return;el.innerHTML='';if(!nextPair)return;for(var i=0;i<2;i++){var d=document.createElement('div');d.className='mini t'+nextPair[i];d.textContent=TYPES[nextPair[i]].g;el.appendChild(d)}}
-function disableControls(v){var xs=document.querySelectorAll('.ctl');for(var i=0;i<xs.length;i++)xs[i].disabled=!!v}
-var controls=document.querySelectorAll('.ctl');for(var ci=0;ci<controls.length;ci++)controls[ci].onclick=function(){var a=this.getAttribute('data-a');if(a==='left')move(-1);else if(a==='right')move(1);else if(a==='rotate')rotate();else if(a==='drop')hardDrop()};
-$('sound').onclick=function(){sound=!sound;saveProgress();$('sound').textContent=sound?'♪':'×';if(sound)tone(520,.07)};$('sound').textContent=sound?'♪':'×';
-$('back').onclick=function(){if(playing){saveRound();menu()}else{location.href='index.html'}};
-document.addEventListener('visibilitychange',function(){if(document.hidden){saveRound();stopTimer()}else if(playing){startTimer()}});
-window.addEventListener('beforeunload',function(){saveRound()});
-emptyBoard();render();menu();
-if(navigator.webdriver){window.Ritual13Test={state:function(){return{board:board,piece:piece,score:score,rituals:rituals,caseIndex:caseIndex,playing:playing,unlocked:prog.unlocked}},start:function(i){caseIndex=i||0;startGame(false)},drop:hardDrop,move:move,rotate:rotate,forceWin:function(){score=CASES[caseIndex].target;rituals=CASES[caseIndex].rit;completeCase()}}}
+function complete(){
+ playing=false;clearRound();var c=CASES[caseIndex],stars=score>=c.target*1.7?3:score>=c.target*1.3?2:1;
+ profile.stars[caseIndex]=Math.max(profile.stars[caseIndex]||0,stars);profile.best[caseIndex]=Math.max(profile.best[caseIndex]||0,score);profile.unlocked=Math.max(profile.unlocked,Math.min(CASES.length,caseIndex+2));saveProfile();
+ showEnd(true,stars);
+}
+function gameOver(){playing=false;clearRound();showEnd(false,0)}
+function saveRound(){if(!playing)return;try{localStorage.setItem(ROUND,JSON.stringify({caseIndex:caseIndex,zen:zen,board:board,piece:piece,next:next,score:score,rituals:rituals,chain:chain}))}catch(e){}}
+function clearRound(){try{localStorage.removeItem(ROUND)}catch(e){}}
+function readRound(){try{return JSON.parse(localStorage.getItem(ROUND)||'null')}catch(e){return null}}
+function resumeRound(){var s=readRound();if(!s)return;caseIndex=Math.max(0,Math.min(11,s.caseIndex||0));zen=!!s.zen;board=cloneBoard(s.board||[]);if(board.length!==ROWS){clearRound();menu();return}piece=s.piece||newPair();next=s.next||newPair();score=s.score||0;rituals=s.rituals||0;chain=s.chain||1;playing=true;normalizePiece();$('overlay').classList.remove('on');render();show('Rodada retomada')}
+function startGame(z){zen=!!z;blank();score=0;rituals=0;chain=1;if(!zen)addStones(CASES[caseIndex].stones);piece=newPair();next=newPair();playing=true;$('overlay').classList.remove('on');saveRound();render();show(zen?'Modo Zen':'Caso '+(caseIndex+1))}
+function tileHTML(t,mini){var T=TYPES[t];return '<span class="'+(mini?'mini ':'tile ')+T.cls+'">'+T.g+'</span>'}
+function render(){
+ var ghost=landingCells(),land={};if(ghost)for(var z=0;z<ghost.length;z++)land[key(ghost[z].r,ghost[z].c)]=1;
+ var html='';for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){var v=board[r]&&board[r][c],cls='cell'+(land[key(r,c)]?' land':'');html+='<button class="'+cls+'" data-col="'+c+'" aria-label="Coluna '+(c+1)+'">';if(v)html+=v.stone?'<span class="tile stone">×</span>':tileHTML(v.t,false);html+='</button>'}
+ $('board').innerHTML=html;
+ var ph='<div class="piece '+(piece&&piece.ori?'h':'v')+'">';if(piece){ph+=tileHTML(piece.a,true)+tileHTML(piece.b,true)}ph+='</div>';$('pieceView').innerHTML=ph;$('colLabel').textContent='coluna '+((piece?piece.col:0)+1)+(piece&&piece.ori?'–'+(piece.col+2):'');
+ $('nextPair').innerHTML=next?tileHTML(next.a,true)+tileHTML(next.b,true):'';
+ $('score').textContent=score;$('rituals').textContent=rituals;$('chain').textContent='×'+Math.max(1,chain-1);
+ if(zen){$('goal').textContent='ZEN';$('goalbar').style.width='0%'}else{var cse=CASES[caseIndex];$('goal').textContent=score+' / '+cse.target+(cse.rit?' • R '+rituals+'/'+cse.rit:'');$('goalbar').style.width=Math.min(100,score/cse.target*100)+'%'}
+ $('sound').textContent=sound?'SOM ON':'SOM OFF';
+}
+function menu(){
+ playing=false;$('overlay').classList.add('on');var total=0;Object.keys(profile.stars||{}).forEach(function(k){total+=profile.stars[k]||0});var round=readRound();
+ var h='<div class="kick">puzzle sobrenatural • V4</div><h1>Ritual 13</h1><p>Agora o jogo é totalmente por turnos: sem canvas, sem queda automática e sem gestos obrigatórios. Escolha a coluna, gire e solte.</p><div class="story"><b>'+CASES[caseIndex].name+'</b><small>'+CASES[caseIndex].story+'</small></div><div class="stats"><div class="stat"><b>'+profile.unlocked+'</b><small>CASOS</small></div><div class="stat"><b>'+total+'</b><small>ESTRELAS</small></div><div class="stat"><b>'+(profile.totalRituals||0)+'</b><small>RITUAIS</small></div></div><div class="cases" id="caseList"></div><div class="btns">';
+ if(round)h+='<button class="btn resume" id="resumeBtn">CONTINUAR RODADA</button>';
+ h+='<button class="btn zen" id="zenBtn">MODO ZEN</button><button class="btn primary" id="playBtn">JOGAR CASO</button></div><div class="help">Quatro iguais conectados desaparecem. Um quadrado 2×2 igual ativa Ritual e limpa aquela família inteira. Não existe cronômetro, energia ou anúncio.</div>';
+ $('card').innerHTML=h;var list=$('caseList');
+ for(var i=0;i<CASES.length;i++){var b=document.createElement('button');b.className='case '+(i>=profile.unlocked?'lock ':'')+(i===caseIndex?'current':'');var st=profile.stars[i]||0;b.innerHTML='<b>'+String(i+1).padStart(2,'0')+' · '+CASES[i].name+'</b><small>'+CASES[i].target+' pts'+(CASES[i].rit?' • '+CASES[i].rit+' ritual'+(CASES[i].rit>1?'s':''):'')+'</small><em>'+(i>=profile.unlocked?'BLOQUEADO':'★'.repeat(st)+'☆'.repeat(3-st))+'</em>';
+  if(i<profile.unlocked)(function(n,el){el.onclick=function(){caseIndex=n;menu()}})(i,b);list.appendChild(b);
+ }
+ $('playBtn').onclick=function(){startGame(false)};$('zenBtn').onclick=function(){startGame(true)};if($('resumeBtn'))$('resumeBtn').onclick=resumeRound;
+}
+function showEnd(win,stars){
+ $('overlay').classList.add('on');var c=CASES[caseIndex];
+ if(win){$('card').innerHTML='<div class="kick">caso estabilizado</div><h1>'+c.name+'</h1><p>O padrão fechou sem quebrar o Véu.</p><div class="stats"><div class="stat"><b>'+score+'</b><small>PONTOS</small></div><div class="stat"><b>'+rituals+'</b><small>RITUAIS</small></div><div class="stat"><b>'+('★'.repeat(stars))+'</b><small>RESULTADO</small></div></div><div class="btns"><button class="btn" id="menuBtn">CASOS</button><button class="btn primary" id="nextBtn">'+(caseIndex<11?'PRÓXIMO CASO':'JOGAR DE NOVO')+'</button></div>';}
+ else{$('card').innerHTML='<div class="kick">sem espaço</div><h1>O Véu fechou.</h1><p>Você ficou sem espaço para a peça atual. Abra grupos cedo e deixe o centro respirando.</p><div class="stats"><div class="stat"><b>'+score+'</b><small>PONTOS</small></div><div class="stat"><b>'+rituals+'</b><small>RITUAIS</small></div><div class="stat"><b>'+CASES[caseIndex].target+'</b><small>ALVO</small></div></div><div class="btns"><button class="btn" id="menuBtn">CASOS</button><button class="btn primary" id="retryBtn">TENTAR DE NOVO</button></div>';}
+ $('menuBtn').onclick=menu;if(win)$('nextBtn').onclick=function(){if(caseIndex<11)caseIndex=Math.min(caseIndex+1,(profile.unlocked||1)-1);startGame(false)};else $('retryBtn').onclick=function(){startGame(false)};
+}
+function show(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('on')},850)}
+function beep(freq){if(!sound)return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;var a=beep.ctx||(beep.ctx=new AC()),o=a.createOscillator(),g=a.createGain();o.frequency.value=freq||300;g.gain.value=.015;o.connect(g);g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.04);o.stop(a.currentTime+.04)}catch(e){}}
+function chooseColumn(c){if(!playing||!piece)return;piece.col=Number(c);normalizePiece();saveRound();render()}
+$('board').addEventListener('click',function(e){var cell=e.target.closest('[data-col]');if(cell)chooseColumn(cell.getAttribute('data-col'))});
+document.querySelectorAll('[data-act]').forEach(function(btn){btn.addEventListener('click',function(){var a=this.getAttribute('data-act');if(a==='left')move(-1);else if(a==='right')move(1);else if(a==='rotate')rotate();else if(a==='drop')drop()})});
+$('back').onclick=function(){if(playing){saveRound();menu()}else location.href='index.html'};$('sound').onclick=function(){sound=!sound;saveProfile();render();if(sound)beep(440)};
+document.addEventListener('keydown',function(e){if(!playing)return;if(e.key==='ArrowLeft')move(-1);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowUp'||e.key===' ')rotate();else if(e.key==='ArrowDown'||e.key==='Enter')drop()});
+function selfTest(){
+ var out={pass:true,steps:[]};function assert(cond,msg){if(!cond){out.pass=false;out.steps.push('FAIL '+msg);throw new Error(msg)}out.steps.push('OK '+msg)}
+ try{
+  zen=true;blank();score=0;rituals=0;chain=1;playing=true;next={a:0,b:0,ori:0,col:0};piece={a:0,b:0,ori:0,col:0};drop();piece={a:0,b:0,ori:0,col:0};drop();assert(score>=100,'grupo de 4 limpa e pontua');
+  piece={a:1,b:1,ori:1,col:2};drop();piece={a:1,b:1,ori:1,col:2};drop();assert(rituals>=1,'ritual 2x2 limpa família');
+  piece={a:2,b:3,ori:0,col:3};next={a:4,b:4,ori:0,col:3};saveRound();var saved=readRound();assert(saved&&saved.board.length===ROWS,'save da rodada válido');board[ROWS-1][0]={t:4};resumeRound();assert(!(board[ROWS-1][0]&&board[ROWS-1][0].t===4),'resume restaura snapshot');
+  for(var i=0;i<60&&playing;i++){piece={a:i%3,b:(i+1)%3,ori:i%2,col:i%(i%2?COLS-1:COLS)};drop();if(!playing){blank();playing=true;piece=newPair();next=newPair()}}
+  assert(board.length===ROWS&&board[0].length===COLS,'60 turnos sem estrutura quebrada');
+ }catch(e){out.error=String(e&&e.message||e)}
+ document.body.setAttribute('data-selftest',out.pass?'pass':'fail');var pre=document.createElement('pre');pre.id='selftest';pre.textContent=JSON.stringify(out);pre.style.cssText='position:fixed;z-index:9999;inset:5px;background:#000;color:#0f0;overflow:auto;font-size:11px;padding:8px';document.body.appendChild(pre);
+}
+blank();render();menu();
+if(location.search.indexOf('selftest=1')>=0)setTimeout(selfTest,20);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
 })();
 </script>
 </body>
