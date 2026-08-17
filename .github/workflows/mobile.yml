@@ -21,9 +21,9 @@ permissions:
 
 jobs:
   android:
-    name: Android APK
+    name: Android APK + Emulator smoke test
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,16 +48,43 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+      - name: Boot Android Emulator and launch Sala 13
+        shell: bash
+        run: |
+          set -euo pipefail
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager 'platform-tools' 'emulator' 'system-images;android-35;google_apis;x86_64'
+          echo no | avdmanager create avd --force --name sala13-ci --package 'system-images;android-35;google_apis;x86_64'
+          "$ANDROID_HOME/emulator/emulator" -avd sala13-ci -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect >/tmp/emulator.log 2>&1 &
+          adb wait-for-device
+          for i in {1..90}; do
+            if [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then break; fi
+            sleep 2
+          done
+          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
+          adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+          adb shell am force-stop com.rodrigopitsch.sala13
+          adb shell am start -W -n com.rodrigopitsch.sala13/.MainActivity | tee /tmp/start.txt
+          grep -Eq 'Status: ok|ThisTime:' /tmp/start.txt
+          sleep 4
+          adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep 'com.rodrigopitsch.sala13'
+          adb exec-out screencap -p > Sala13-Android-smoke.png
+          if adb logcat -d -t 400 | grep -A8 -B3 'FATAL EXCEPTION' | grep -q 'com.rodrigopitsch.sala13'; then
+            echo 'Fatal exception detected in Sala 13' >&2
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: Sala13-Android-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            Sala13-Android-smoke.png
           if-no-files-found: error
 
   ios:
-    name: iOS Simulator
+    name: iOS Simulator smoke test
     runs-on: macos-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -84,10 +111,32 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
+      - name: Boot iPhone Simulator, install and launch Sala 13
+        shell: bash
+        run: |
+          set -euo pipefail
+          UDID=$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {print $2; exit}')
+          if [ -z "$UDID" ]; then
+            echo 'No available iPhone Simulator found' >&2
+            exit 1
+          fi
+          xcrun simctl boot "$UDID" 2>/dev/null || true
+          open -a Simulator
+          xcrun simctl bootstatus "$UDID" -b
+          APP_PATH='build/Build/Products/Debug-iphonesimulator/App.app'
+          test -d "$APP_PATH"
+          xcrun simctl install "$UDID" "$APP_PATH"
+          LAUNCH_OUT=$(xcrun simctl launch "$UDID" com.rodrigopitsch.sala13)
+          echo "$LAUNCH_OUT"
+          echo "$LAUNCH_OUT" | grep 'com.rodrigopitsch.sala13:'
+          sleep 4
+          xcrun simctl io "$UDID" screenshot Sala13-iOS-smoke.png
       - name: Package iOS Simulator app
         run: ditto -c -k --sequesterRsrc --keepParent build/Build/Products/Debug-iphonesimulator/App.app Sala13-iOS-Simulator.zip
       - uses: actions/upload-artifact@v4
         with:
           name: Sala13-iOS-Simulator
-          path: Sala13-iOS-Simulator.zip
+          path: |
+            Sala13-iOS-Simulator.zip
+            Sala13-iOS-smoke.png
           if-no-files-found: error
