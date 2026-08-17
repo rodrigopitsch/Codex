@@ -55,19 +55,39 @@ jobs:
           SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
           AVDMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name avdmanager | head -n 1)
           ADB="$ANDROID_HOME/platform-tools/adb"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
           test -x "$SDKMANAGER"
           test -x "$AVDMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" 'platform-tools' 'emulator' 'system-images;android-35;google_apis;x86_64'
           test -x "$ADB"
+          test -x "$EMULATOR"
           echo no | "$AVDMANAGER" create avd --force --name sala13-ci --package 'system-images;android-35;google_apis;x86_64'
-          "$ANDROID_HOME/emulator/emulator" -avd sala13-ci -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect >/tmp/emulator.log 2>&1 &
-          "$ADB" wait-for-device
-          for i in {1..90}; do
-            if [ "$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then break; fi
+          if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm || true; fi
+          "$ADB" kill-server || true
+          "$ADB" start-server
+          "$EMULATOR" -avd sala13-ci -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect >/tmp/emulator.log 2>&1 &
+          EMU_PID=$!
+          BOOTED=0
+          for i in {1..120}; do
+            if ! kill -0 "$EMU_PID" 2>/dev/null; then
+              echo 'Android Emulator exited before boot' >&2
+              cat /tmp/emulator.log >&2 || true
+              exit 1
+            fi
+            if "$ADB" get-state >/dev/null 2>&1; then
+              if [ "$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then
+                BOOTED=1
+                break
+              fi
+            fi
             sleep 2
           done
-          test "$("$ADB" shell getprop sys.boot_completed | tr -d '\r')" = "1"
+          if [ "$BOOTED" != "1" ]; then
+            echo 'Android Emulator did not finish booting' >&2
+            cat /tmp/emulator.log >&2 || true
+            exit 1
+          fi
           "$ADB" install -r android/app/build/outputs/apk/debug/app-debug.apk
           "$ADB" shell am force-stop com.rodrigopitsch.sala13
           "$ADB" shell am start -W -n com.rodrigopitsch.sala13/.MainActivity | tee /tmp/start.txt
