@@ -12,6 +12,7 @@ document.head.appendChild(a13V6Style);
 
 let a13DeathBaseHint='';
 let a13DeathShown=false;
+let a13V6Elapsed=0;
 
 function a13V6Fmt(sec){
  sec=Math.max(0,Math.round(Number(sec)||0));
@@ -38,7 +39,7 @@ function a13ShowDeathScreen(){
   <h1>Você caiu. O que fazer?</h1>
   <p>A morte agora é uma decisão: continue a investigação imediatamente ou recue, fortaleça o caçador e volte mais preparado.</p>
   <div class="stats">
-   <div class="stat"><b>${a13V6Fmt(gameTime)}</b><small>TEMPO</small></div>
+   <div class="stat"><b>${a13V6Fmt(a13V6Elapsed)}</b><small>TEMPO</small></div>
    <div class="stat"><b>${player?.ess||0}</b><small>ESSÊNCIA NA MISSÃO</small></div>
    <div class="stat"><b>${save.ess||0}</b><small>ESSÊNCIA NA BASE</small></div>
   </div>
@@ -51,6 +52,7 @@ function a13ShowDeathScreen(){
  retry.onclick=()=>{
   a13DeathShown=false;
   overlay.classList.remove('on');
+  if(!hasCheckpoint)a13V6Elapsed=0;
   state='play';
   respawn();
   objectiveMsg(hasCheckpoint?'Nova tentativa • checkpoint restaurado.':'Nova tentativa • caso reiniciado.',2.2);
@@ -65,6 +67,13 @@ function a13ShowDeathScreen(){
   menu();
  };
 }
+
+/* Track elapsed run time independently so checkpoint restores never rewind it. */
+const a13V6BaseUpdate=updateWorld;
+updateWorld=function(dt){
+ if(state==='play')a13V6Elapsed+=dt;
+ a13V6BaseUpdate(dt);
+};
 
 /* Replace the old automatic 650 ms respawn with an explicit player decision. */
 damage=function(n,fromX){
@@ -106,6 +115,7 @@ const a13V6BaseStart=startCase;
 startCase=function(){
  a13DeathBaseHint='';
  a13DeathShown=false;
+ a13V6Elapsed=0;
  a13V6BaseStart();
 };
 /* ===== /ARQUIVO 13 V6 DEATH + PROGRESSION LOOP ===== */
