@@ -1,4 +1,4 @@
-const CACHE='sala-jogos-offline-v23';
+const CACHE='sala-jogos-offline-v24';
 const A13_PARTS=["./a13v3/part00.txt","./a13v3/part01.txt","./a13v3/part02.txt","./a13v3/part03.txt","./a13v3/part04.txt","./a13v3/part05.txt","./a13v3/part06.txt","./a13v3/part07.txt"];
 const FILES=["./index.html","./index-core.html","./jogo-da-velha.html","./jogo-da-velha-core.html","./ludo.html","./ludo-core.html","./paciencia-trilha.html","./paciencia-trilha-core.html","./poker.html","./poker-core.html","./ritual13.html","./ritual13-core.html","./ritual13-v6.css","./ritual13-v6.js","./hunt.html","./hunt-core.html","./occult-trail.html","./occult-trail-core.html","./arquivo13.html","./arquivo13-v4.js","./arquivo13-v5.js","./arquivo13-v6.js","./v4-enhance.css","./v4-enhance.js","./v5-social.css","./v5-social.js","./v7-ux.css","./v7-ux.js","./v8-hunt.css","./v8-hunt.js","./manifest.webmanifest","./icon.svg"].concat(A13_PARTS);
 async function getFresh(u){const r=await fetch(u,{cache:'reload'});if(!r||!r.ok)throw new Error('Falha ao baixar '+u);return r}
