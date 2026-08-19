@@ -1,107 +1,23 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#050711">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>NEXUS — Caçadas Entre Mundos</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#050711;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{display:grid;place-items:center;overflow:hidden}.boot{width:min(88vw,520px);text-align:center;padding:28px}.mark{font-size:11px;font-weight:900;letter-spacing:.22em;color:#b88cff}.boot h1{margin:8px 0 6px;font-size:clamp(28px,8vw,48px);line-height:.95}.boot p{color:#9aa9c3;font-size:12px;line-height:1.5}.bar{height:4px;margin:18px auto 0;max-width:260px;border-radius:99px;overflow:hidden;background:#171d2c}.bar i{display:block;width:35%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7550c5,#72ddff);animation:load 1.1s ease-in-out infinite alternate}@keyframes load{to{transform:translateX(185%)}}.err{color:#ff9ca8!important}
-</style>
-</head>
-<body>
-<main class="boot"><div class="mark">NEXUS // MULTIVERSO</div><h1>Caçadas Entre Mundos</h1><p id="msg">Carregando o núcleo do Arquivo 13 e preparando os universos…</p><div class="bar"><i></i></div></main>
-<script>
-(async()=>{
-'use strict';
-const ROOT='https://raw.githubusercontent.com/rodrigopitsch/Codex/main/';
-const parts=Array.from({length:8},(_,i)=>`${ROOT}a13v3/part${String(i).padStart(2,'0')}.txt`);
-const get=async url=>{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error(`Falha ao carregar ${url.split('/').pop()}`);return r.text()};
-let source=(await Promise.all(parts.map(get))).join('');
-
-// Identidade independente, sem alterar o Arquivo 13 original.
-source=source
- .replaceAll('Arquivo 13 — Caçada 2D','NEXUS — Caçadas Entre Mundos')
- .replaceAll('ARQUIVO 13 — CAÇADA 2D','NEXUS — CAÇADAS ENTRE MUNDOS')
- .replaceAll('Arquivo 13','NEXUS')
- .replaceAll('ARQUIVO 13','NEXUS')
- .replace("const SAVE_KEY='arquivo13_save_v2';","const SAVE_KEY='nexus_cacadas_save_v1';")
- .replaceAll('plataforma sobrenatural • progresso independente','multiverso 2D • progresso independente')
- .replaceAll('Plataforma 2D sobrenatural. Corra, pule, use a relíquia e resolva casos curtos com progressão permanente.','Plataforma 2D multiverso. Corra, pule e lute em fases que mudam de identidade conforme a série escolhida.')
- .replaceAll('RELÍQUIA','ATAQUE')
- .replaceAll('Relíquia','Ataque')
- .replaceAll('relíquia','ataque');
-
-// Mantém as expansões originais funcionando a partir do novo projeto.
-for(const f of ['arquivo13-v4.js','arquivo13-v5.js','arquivo13-v6.js','arquivo13-v7.js']){
-  source=source.replaceAll(`./${f}`,`${ROOT}${f}`);
-}
-
-const extraCss=`
-.universeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.universeBtn{position:relative;min-height:92px;padding:11px;border-radius:14px;border:1px solid #344158;background:linear-gradient(145deg,#111827,#090d16);text-align:left;overflow:hidden}.universeBtn:active{transform:scale(.98)}.universeBtn b{display:block;font-size:12px}.universeBtn small{display:block;margin-top:5px;color:#92a2ba;font-size:8px;line-height:1.35}.universeBtn em{position:absolute;right:9px;top:8px;font-style:normal;font-size:18px;opacity:.9}.universeBtn[data-u="supernatural"]{border-color:#76589c}.universeBtn[data-u="titan"]{border-color:#8c744e}.universeBtn[data-u="jujutsu"]{border-color:#5950a6}.universeBtn[data-u="slayer"]{border-color:#396d6b}.universeTag{display:inline-flex;align-items:center;gap:6px;margin:0 0 7px;padding:5px 8px;border-radius:99px;border:1px solid #39445e;background:#0b111c;color:#d7e0ef;font-size:8px;font-weight:900}.seriesHint{color:#ffd98a!important}.worldBadge{position:absolute;top:105px;right:8px;z-index:8;padding:5px 7px;border-radius:8px;border:1px solid #39445e;background:#080b13dc;font-size:7px;font-weight:900;letter-spacing:.05em;pointer-events:none}
-@media(max-width:390px){.universeGrid{grid-template-columns:1fr}.universeBtn{min-height:72px}}
-`;
-source=source.replace('</style>',extraCss+'</style>');
-source=source.replace('<div class="toast" id="toast"></div>','<div class="toast" id="toast"></div><div class="worldBadge" id="worldBadge">NEXUS</div>');
-
-const universeCode=String.raw`
-const BASE_CASES=CASES.map(c=>({...c}));
-const SERIES={
- supernatural:{name:'Sobrenatural',short:'CAÇADORES',icon:'✦',theme:0,accent:'#b88cff',cases:[
-  ['Selo na Estrada','Cidade esquecida do Kansas','Uma sequência de mortes impossíveis termina sempre com o mesmo símbolo queimado no asfalto.','Demônio da Encruzilhada','Reúna 3 sinais, quebre o selo e alcance a criatura.'],
-  ['A Casa que Respira','Bairro abandonado','As paredes registram vozes de pessoas desaparecidas e as portas mudam de lugar depois da meia-noite.','Espírito Vingativo','Encontre as manifestações e encerre a assombração.'],
-  ['Floresta do Wendigo','Reserva interditada','Pegadas humanas viram garras no meio da mata. Há sobreviventes presos além da linha das árvores.','Wendigo Ancião','Siga as pistas e atravesse a mata antes que ele encontre você.'],
-  ['Hotel do Quarto Selado','Estrada interestadual','O quarto trancado há décadas voltou a receber hóspedes — todos pelo mesmo número.','Bruxa do Espelho','Descubra o ritual e destrua a origem da maldição.'],
-  ['A Última Encruzilhada','Marco 13','Todos os casos convergem para um pacto antigo. O preço vence ao amanhecer.','Príncipe do Inferno','Quebre o pacto e feche a passagem do Nexus.'] ]},
- titan:{name:'Attack on Titan',short:'MURALHAS',icon:'⚔',theme:2,accent:'#e1b76a',cases:[
-  ['Brecha no Distrito','Muralha exterior','O alarme toca e uma abertura transforma as ruas em corredor de evacuação.','Titã Aberrante','Colete 3 sinais de rota e alcance o ponto de contenção.'],
-  ['Telhados de Trost','Distrito urbano','A rota pelo chão foi perdida. O avanço agora depende dos telhados e das passagens estreitas.','Titã de Investida','Cruze o distrito e abra caminho até a linha de defesa.'],
-  ['Bosque dos Gigantes','Área de reconhecimento','A formação foi quebrada dentro da floresta e algo maior acompanha a tropa pelas árvores.','Titã da Floresta','Localize os rastros e sobreviva até a clareira.'],
-  ['Fortaleza Abandonada','Posto avançado','As paredes tremem por dentro. Há uma presença escondida entre os corredores da fortificação.','Titã Couraçado','Ative os pontos de defesa e enfrente a ruptura.'],
-  ['Além da Muralha','Território desconhecido','A última expedição encontra a origem de uma sequência de ataques coordenados.','Titã Primordial','Atravesse o campo e conclua a expedição do Nexus.'] ]},
- jujutsu:{name:'Jujutsu Kaisen',short:'FEITICEIROS',icon:'◉',theme:4,accent:'#b697ff',cases:[
-  ['Escola Sob Maldição','Colégio interditado','Uma cortina caiu sobre o prédio. A energia amaldiçoada aumenta a cada minuto.','Maldição de Grau Especial','Colete 3 vestígios e rompa a cortina.'],
-  ['Estação Subterrânea','Linha bloqueada','Passageiros desapareceram entre duas plataformas e o túnel está saturado de energia amaldiçoada.','Maldição do Subsolo','Purifique os focos e avance até o núcleo.'],
-  ['Domínio Incompleto','Templo em ruínas','O espaço dobra ao redor do templo e criaturas surgem de pontos que não deveriam existir.','Portador do Domínio','Encontre as âncoras e quebre o domínio antes de fechar.'],
-  ['Hospital Desativado','Ala restrita','Uma concentração anormal de medo transformou a ala em território amaldiçoado.','Espírito da Agonia','Purifique os focos e alcance a sala central.'],
-  ['Convergência','Nó do Nexus','Várias assinaturas de energia se fundiram em uma única presença.','Maldição do Nexus','Rompa a convergência e encerre a manifestação.'] ]},
- slayer:{name:'Demon Slayer',short:'CAÇADORES DE ONI',icon:'☾',theme:1,accent:'#72ddc9',cases:[
-  ['Vila ao Anoitecer','Montanha remota','Moradores desaparecem quando as lanternas se apagam. Marcas conduzem para a encosta.','Oni da Névoa','Reúna 3 rastros e alcance o esconderijo antes do amanhecer.'],
-  ['Trem da Madrugada','Linha noturna','Passageiros dormem e não conseguem acordar enquanto o trem segue sem parar.','Oni dos Sonhos','Atravesse os vagões e corte a origem do pesadelo.'],
-  ['Bosque das Teias','Floresta montanhosa','Fios quase invisíveis controlam criaturas e bloqueiam o caminho entre as árvores.','Oni Aranha','Encontre os pontos da teia e chegue ao centro da floresta.'],
-  ['Distrito das Lanternas','Bairro noturno','Uma presença se esconde entre as luzes e desaparece antes de cada ataque.','Lua Demoníaca','Siga os vestígios e force a criatura a se revelar.'],
-  ['Castelo Mutável','Fortaleza impossível','Corredores mudam de posição enquanto a concentração de demônios cresce.','Lua Superior','Atravesse o castelo e feche a ruptura do Nexus.'] ]}
-};
-let selectedSeries='supernatural',launchingUniverse=false;
-function universeData(){return SERIES[selectedSeries]||SERIES.supernatural}
-function applyUniverse(){
- const u=universeData(),base=BASE_CASES[caseIndex],d=u.cases[caseIndex]||u.cases[0];
- CASES[caseIndex]={...base,title:d[0],sub:d[1],story:d[2],boss:d[3],goal:d[4],theme:u.theme};
- document.documentElement.style.setProperty('--purple',u.accent);
- const wb=document.getElementById('worldBadge');if(wb)wb.textContent=u.name.toUpperCase();
- const topTitle=document.querySelector('.top .title b');if(topTitle)topTitle.textContent='NEXUS — '+u.name.toUpperCase();
- const topSub=document.querySelector('.top .title small');if(topSub)topSub.textContent=u.short.toLowerCase()+' • progresso independente';
-}
-function chooseUniverse(){
- state='menu';overlay.classList.add('on');bossBar.classList.remove('on');
- const buttons=Object.keys(SERIES).map(function(k){const u=SERIES[k];return '<button class="universeBtn" data-u="'+k+'"><em>'+u.icon+'</em><b>'+u.name+'</b><small>'+u.short+' • '+u.cases[caseIndex][0]+'</small></button>'}).join('');
- panel.innerHTML='<div class="kicker">nexus // escolha o universo</div><h1>Onde será a próxima caçada?</h1><p class="seriesHint">A mecânica é a mesma. A série escolhida muda identidade visual, missão, inimigos e chefe desta fase.</p><div class="universeGrid">'+buttons+'</div><div class="btns"><button class="btn" id="universeBack">VOLTAR</button><button class="btn primary" id="universeRandom">ALEATÓRIO</button></div>';
- panel.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{selectedSeries=b.dataset.u;applyUniverse();launchingUniverse=true;startCase()});
- $('universeBack').onclick=menu;$('universeRandom').onclick=()=>{const ks=Object.keys(SERIES);selectedSeries=ks[Math.floor(Math.random()*ks.length)];applyUniverse();launchingUniverse=true;startCase()};
-}
-`;
-source=source.replace('let save=loadSave();',universeCode+'\nlet save=loadSave();');
-source=source.replace('function startCase(){initAudio();',"function startCase(){if(!launchingUniverse){chooseUniverse();return}launchingUniverse=false;initAudio();");
-
-// Resultado final passa a ser coerente com qualquer universo escolhido.
-source=source.replace(/\$\{caseIndex===0\?'O sino silenciou\.[\s\S]*?'O marco 13 desaba\.[\s\S]*?'\}/,"${'A missão foi concluída neste universo. A ruptura foi contida, mas outra coordenada do Nexus acaba de se abrir.'}");
-
-// A tela inicial mantém o nome da apresentação.
-source=source.replace('<div class="kicker">arquivo independente // campanha</div><h1>NEXUS</h1>','<div class="kicker">nexus // campanha multiverso</div><h1>Caçadas Entre Mundos</h1>');
-
-document.open();document.write(source);document.close();
-})().catch(err=>{console.error(err);const m=document.getElementById('msg');m.classList.add('err');m.textContent='Não foi possível carregar o núcleo do jogo. Verifique a conexão e tente novamente.'});
-</script>
-</body>
-</html>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#050711"><title>NEXUS — Caçadas Entre Mundos</title><style>html,body{margin:0;width:100%;height:100%;display:grid;place-items:center;background:#050711;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.boot{text-align:center;padding:24px}.boot b{display:block;font-size:26px}.boot p{color:#9aa9c3;font-size:12px}</style></head><body><main class="boot"><b>NEXUS</b><p id="msg">Preparando os mundos…</p></main><script>(async()=>{'use strict';const R='https://raw.githubusercontent.com/rodrigopitsch/Codex/main/';const get=async u=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw Error(u);return r.text()};let s=(await Promise.all(Array.from({length:8},(_,i)=>get(R+'a13v3/part'+String(i).padStart(2,'0')+'.txt')))).join('');for(const f of ['arquivo13-v4.js','arquivo13-v5.js','arquivo13-v6.js','arquivo13-v7.js'])s=s.replaceAll('./'+f,R+f);s=s.replaceAll('Arquivo 13 — Caçada 2D','NEXUS — Caçadas Entre Mundos').replaceAll('ARQUIVO 13 — CAÇADA 2D','NEXUS — CAÇADAS ENTRE MUNDOS').replaceAll('Arquivo 13','NEXUS').replaceAll('ARQUIVO 13','NEXUS').replace("const SAVE_KEY='arquivo13_save_v2';","const SAVE_KEY='nexus_cacadas_save_v2';").replaceAll('RELÍQUIA','ATAQUE').replaceAll('Relíquia','Ataque').replaceAll('relíquia','ataque');const css=`.universeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.universeBtn{min-height:82px;padding:11px;border-radius:14px;border:1px solid #3d4660;background:#101623;text-align:left}.universeBtn b{display:block;font-size:12px}.universeBtn small{display:block;margin-top:5px;color:#91a0b5;font-size:8px}.worldBadge{position:absolute;right:8px;top:105px;z-index:8;padding:5px 7px;border-radius:8px;background:#080b13e8;border:1px solid var(--nx,#6b5c9b);font-size:7px;font-weight:900;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shoot::after{content:var(--atk,'ATAQUE')!important}@media(max-width:390px){.universeGrid{grid-template-columns:1fr}}`;s=s.replace('</style>',css+'</style>').replace('<div class="toast" id="toast"></div>','<div class="toast" id="toast"></div><div class="worldBadge" id="worldBadge">NEXUS</div>');const code=String.raw`
+const NXBASE=CASES.map(x=>({...x}));
+const NX={
+ supernatural:{name:'Sobrenatural',atk:'COLT',phase:[['Selo na Estrada','Kansas','Demônio da Encruzilhada'],['Casa que Respira','Bairro abandonado','Espírito Vingativo'],['Floresta do Wendigo','Reserva interditada','Wendigo Ancião'],['Hotel do Quarto Selado','Estrada interestadual','Bruxa do Espelho'],['Última Encruzilhada','Marco 13','Príncipe do Inferno']]},
+ titan:{name:'Attack on Titan',atk:'LÂMINA',phase:[['Brecha no Distrito','Muralha exterior','Titã Aberrante'],['Telhados de Trost','Distrito urbano','Titã de Investida'],['Bosque dos Gigantes','Reconhecimento','Titã da Floresta'],['Fortaleza Abandonada','Posto avançado','Titã Couraçado'],['Além da Muralha','Território desconhecido','Titã Primordial']]},
+ jujutsu:{name:'Jujutsu Kaisen',atk:'JUJUTSU',phase:[['Escola Sob Maldição','Colégio interditado','Maldição Especial'],['Estação Subterrânea','Linha bloqueada','Maldição do Subsolo'],['Domínio Incompleto','Templo em ruínas','Portador do Domínio'],['Hospital Desativado','Ala restrita','Espírito da Agonia'],['Convergência','Nó do Nexus','Maldição do Nexus']]},
+ slayer:{name:'Demon Slayer',atk:'NICHRIN',phase:[['Vila ao Anoitecer','Montanha remota','Oni da Névoa'],['Trem da Madrugada','Linha noturna','Oni dos Sonhos'],['Bosque das Teias','Floresta montanhosa','Oni Aranha'],['Distrito das Lanternas','Bairro noturno','Lua Demoníaca'],['Castelo Mutável','Fortaleza impossível','Lua Superior']]}}
+const NXPAL={
+ supernatural:[['#21113b','#060712','#151328','#181923','#171d19','#58624b','#b88cff'],['#30131e','#09070c','#26151c','#22191d','#211b1d','#80525e','#e699a7'],['#0c2a20','#040a08','#10261c','#14271e','#142018','#50745a','#8fd1a0'],['#1e2032','#08090e','#20202b','#29282d','#1f1e20','#726a65','#d8b86c'],['#3a1018','#080508','#2b1018','#241217','#211517','#8d4050','#ff6d7a']],
+ titan:[['#766c55','#20242a','#56554d','#3a3d39','#282a24','#80775b','#d7bd7d'],['#596d7a','#131b21','#37454d','#30363a','#252720','#81785c','#ddc37c'],['#17372d','#08120e','#183329','#20382e','#17241b','#57765e','#9dcc8f'],['#4d4538','#121318','#37322a','#2f2d29','#25241f','#89754e','#d8ae65'],['#6d5b45','#17191b','#4b4035','#383630','#272a25','#7a7059','#cfb47d']],
+ jujutsu:[['#171545','#060914','#161a38','#17182b','#171824','#525395','#9290ff'],['#102535','#050a10','#132c3b','#16232c','#171d22','#417087','#69c9ff'],['#33133b','#080611','#26102f','#25162c','#1f1823','#7a4282','#dd72ff'],['#22323a','#070b0e','#1b2930','#1f282c','#1d2223','#5b737b','#7fc8c8'],['#260736','#030306','#1c0827','#1a0d21','#171119','#6c2e80','#e35cff']],
+ slayer:[['#0c3941','#061014','#15363b','#1a3134','#18231f','#517a6e','#70d7c1'],['#29172f','#07080d','#22192a','#201b25','#211c1b','#78505f','#ef789b'],['#162f25','#050c08','#173127','#1b3328','#16241b','#50765b','#9dcd8c'],['#3c1728','#0a080d','#351829','#2b1a23','#241b1e','#905568','#ff9cbb'],['#18112e','#050409','#1c142c','#221a2e','#1d1920','#68547f','#bf9dff']]};
+let nxSeries='supernatural',nxCampaign=false,nxLaunch=false;function nxU(){return NX[nxSeries]}function nxP(){return NXPAL[nxSeries][caseIndex]}
+function nxApply(){const u=nxU(),p=u.phase[caseIndex],c=NXPAL[nxSeries][caseIndex];THEMES[caseIndex]={sky1:c[0],sky2:c[1],far:c[2],mid:c[3],ground:c[4],edge:c[5],accent:c[6],moon:'#eee6d9',fog:c[5]};CASES[caseIndex]={...NXBASE[caseIndex],title:p[0],sub:p[1],boss:p[2],theme:caseIndex,goal:'Encontre 3 pistas, derrote o chefe e conclua a fase.'};document.documentElement.style.setProperty('--nx',c[6]);document.documentElement.style.setProperty('--atk',"'"+u.atk+"'");const w=document.getElementById('worldBadge');if(w)w.textContent='FASE '+(caseIndex+1)+' • '+u.name.toUpperCase()+' • '+p[1].toUpperCase();const t=document.querySelector('.top .title b');if(t)t.textContent='NEXUS — '+u.name.toUpperCase();const st=document.querySelector('.top .title small');if(st)st.textContent='fase '+(caseIndex+1)+' • '+p[0]}
+function nxChoose(){state='menu';overlay.classList.add('on');bossBar.classList.remove('on');panel.innerHTML='<div class="kicker">nexus // escolha o universo</div><h1>Escolha sua campanha</h1><p>O universo escolhido continua nas próximas fases; cada fase muda cenário e layout.</p><div class="universeGrid">'+Object.keys(NX).map(k=>'<button class="universeBtn" data-nx="'+k+'"><b>'+NX[k].name+'</b><small>'+NX[k].phase[caseIndex][0]+'</small></button>').join('')+'</div><div class="btns"><button class="btn" id="nxBack">VOLTAR</button><button class="btn primary" id="nxRand">ALEATÓRIO</button></div>';panel.querySelectorAll('[data-nx]').forEach(b=>b.onclick=()=>{nxSeries=b.dataset.nx;nxCampaign=true;nxLaunch=true;nxApply();startCase()});$('nxBack').onclick=menu;$('nxRand').onclick=()=>{const k=Object.keys(NX);nxSeries=k[Math.floor(Math.random()*k.length)];nxCampaign=true;nxLaunch=true;nxApply();startCase()}}
+`;s=s.replace('let save=loadSave();',code+'\nlet save=loadSave();').replace('function startCase(){initAudio();',"function startCase(){if(!nxLaunch&&!nxCampaign){nxChoose();return}nxLaunch=false;nxCampaign=true;nxApply();initAudio();").replace("$('playBtn').onclick=()=>startCase();","$('playBtn').onclick=()=>{nxCampaign=false;startCase()};");const vis=String.raw`
+const _BW=buildWorld;buildWorld=function(){nxApply();_BW();const gy=groundY(),hs=[[46,74,58,92],[78,104,56,86],[96,58,82,108],[48,84,60,98],[68,42,90,112]][caseIndex];platforms.slice(1).forEach((q,i)=>{q.y=gy-hs[i%hs.length];q.w=86+((i+caseIndex)%3)*28;if(nxSeries==='titan'&&caseIndex===1)q.w+=42;if(nxSeries==='slayer'&&caseIndex===1)q.w+=58});hazards.forEach((h,i)=>{h.x=Math.round(CASES[caseIndex].length*([.2,.48,.73][i]||.8));h.y=gy-8});checkpointSnapshot=captureWorldState();objectiveMsg(CASES[caseIndex].goal,4)};
+function nxRect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}function nxHouse(x,gy,c){nxRect(x,gy-56,108,56,c);ctx.beginPath();ctx.moveTo(x-8,gy-56);ctx.lineTo(x+54,gy-86);ctx.lineTo(x+116,gy-56);ctx.fill()}function nxWall(x,gy,c){nxRect(x,gy-118,175,118,c);for(let i=0;i<175;i+=26)nxRect(x+i,gy-126,16,8,c)}function nxTorii(x,gy,c){nxRect(x,gy-64,5,64,c);nxRect(x+31,gy-64,5,64,c);nxRect(x-5,gy-66,46,5,c)}function nxLantern(x,y,c){ctx.globalAlpha=.28;ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;nxRect(x-4,y-6,8,11,c)}
+drawFar=function(t,w,h,gy){ctx.globalAlpha=.9;const start=Math.floor((camera.x-100)/180)*180;for(let x=start;x<camera.x+w+220;x+=180){if(nxSeries==='titan')nxWall(x,gy,t.far);else if(nxSeries==='jujutsu'){nxRect(x,gy-80,115,80,t.far);for(let yy=gy-65;yy<gy-15;yy+=18)nxRect(x+18,yy,68,4,t.accent)}else if(nxSeries==='slayer'){ctx.fillStyle=t.far;ctx.beginPath();ctx.moveTo(x,gy);ctx.lineTo(x+80,gy-100-(caseIndex%2)*28);ctx.lineTo(x+160,gy);ctx.fill()}else{drawTree(x+40,gy,t);nxRect(x+110,gy-105,4,105,t.far)}}ctx.globalAlpha=.12;ctx.fillStyle=t.fog;for(let i=0;i<5;i++)ctx.fillRect(camera.x-80,gy-45-i*25,w+160,7);ctx.globalAlpha=1};
+drawMid=function(t,w,h,gy){const start=Math.floor((camera.x-100)/190)*190;for(let x=start;x<camera.x+w+220;x+=190){if(nxSeries==='supernatural'){if(caseIndex===2){drawTree(x+25,gy,t);drawTree(x+90,gy,t)}else if(caseIndex===3)nxRect(x,gy-90,125,90,t.mid);else nxHouse(x,gy,t.mid)}else if(nxSeries==='titan'){if(caseIndex===2){drawTree(x+30,gy,t);drawTree(x+105,gy,t)}else nxHouse(x,gy,t.mid)}else if(nxSeries==='jujutsu'){if(caseIndex===2)nxTorii(x+42,gy,t.accent);else nxRect(x,gy-76,130,76,t.mid)}else{if(caseIndex===1){nxRect(x,gy-40,150,40,t.mid);nxRect(x+14,gy-57,118,17,t.mid)}else{nxHouse(x,gy,t.mid);nxLantern(x+28,gy-55,t.accent);nxLantern(x+82,gy-48,t.accent)}}}};
+const _DE=drawEnemy;drawEnemy=function(e,t){if(nxSeries==='supernatural'){_DE(e,t);return}if(e.hit>0&&Math.floor(e.hit*50)%2===0)return;ctx.save();ctx.strokeStyle='#111';ctx.lineWidth=2;if(nxSeries==='titan'){ctx.fillStyle='#c89476';ctx.beginPath();ctx.ellipse(e.x+e.w/2,e.y+e.h/2,e.w*.46,e.h*.5,0,0,Math.PI*2);ctx.fill();ctx.stroke()}else if(nxSeries==='jujutsu'){ctx.fillStyle='#603b78';ctx.beginPath();ctx.arc(e.x+e.w/2,e.y+e.h/2,e.w*.48,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=t.accent;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(e.x+7+i*7,e.y+12+(i%2)*6,2,0,Math.PI*2);ctx.fill()}}else{ctx.fillStyle='#603040';ctx.beginPath();ctx.roundRect(e.x+3,e.y+4,e.w-6,e.h-4,8);ctx.fill();ctx.stroke();ctx.fillStyle='#ff5d74';ctx.fillRect(e.x+8,e.y+9,e.w-16,2)}ctx.restore()};
+const _DB=drawBoss;drawBoss=function(b,t){if(nxSeries==='supernatural'){_DB(b,t);return}ctx.save();ctx.globalAlpha=.2;ctx.fillStyle=t.accent;ctx.beginPath();ctx.arc(b.x+b.w/2,b.y+b.h/2,44,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#111';ctx.lineWidth=3;ctx.fillStyle=nxSeries==='titan'?'#c17f65':nxSeries==='jujutsu'?'#753a8c':'#81354d';ctx.beginPath();ctx.roundRect(b.x+5,b.y+7,b.w-10,b.h-7,13);ctx.fill();ctx.stroke();ctx.restore()};
+`;s=s.replace('requestAnimationFrame(tick)})();',vis+'\nrequestAnimationFrame(tick)})();');document.open();document.write(s);document.close()})().catch(e=>{console.error(e);document.getElementById('msg').textContent='Falha ao carregar o jogo.'})</script></body></html>
