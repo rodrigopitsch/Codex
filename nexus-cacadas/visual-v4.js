@@ -3,7 +3,7 @@ setTimeout(function nxVisualPass4(){try{
   const host=document.querySelector('.stage');if(!host)return;
   document.querySelectorAll('body *').forEach(function(el){
     if(el.children.length)return;
-    if(el.textContent.includes('V7 • 13 casos')||el.textContent.includes('V8 • 13 casos')||el.textContent.includes('V9 • 13 casos'))el.textContent='V10 • 13 casos • controles refinados • arte expandida';
+    if(el.textContent.includes('V7 • 13 casos')||el.textContent.includes('V8 • 13 casos')||el.textContent.includes('V9 • 13 casos')||el.textContent.includes('V10 • 13 casos'))el.textContent='V11 • progressão corrigida • controles refinados • arte expandida';
     if(el.textContent.includes('use a ataque'))el.textContent=el.textContent.replace('use a ataque','use o ataque');
   });
   let atmosphere=document.getElementById('nxAtmosphere');
@@ -20,7 +20,7 @@ setTimeout(function nxVisualPass4(){try{
   if(!impact){impact=document.createElement('div');impact.id='nxImpactLine';impact.className='nxImpactLine';host.appendChild(impact)}
 
   const labels={supernatural:'sinal paranormal ativo',titan:'expedição em curso',jujutsu:'energia amaldiçoada detectada',slayer:'respiração concentrada'};
-  function syncAtmosphere(){document.body.dataset.v='10';const s=status.querySelector('span');if(s)s.textContent=labels[nxSeries]||'portal estabilizado'}
+  function syncAtmosphere(){document.body.dataset.v='11';const s=status.querySelector('span');if(s)s.textContent=labels[nxSeries]||'portal estabilizado'}
   const idV4=nId;nId=function(){idV4();syncAtmosphere()};syncAtmosphere();
 
   function flash(type){vignette.classList.remove('hit','fire');impact.classList.remove('on');void vignette.offsetWidth;vignette.classList.add(type);impact.classList.add('on')}
@@ -63,7 +63,7 @@ setTimeout(function nxVisualPass4(){try{
     chooseV5();
     panel.querySelectorAll('.universeBtn').forEach(function(card){
       const scene=document.createElement('span');scene.className='nxCardScene';scene.innerHTML='<i class="moon"></i><i class="ground"></i><i class="hero"></i>';
-      const badge=document.createElement('span');badge.className='nxIllustrationBadge';badge.textContent='ARTE V10';
+      const badge=document.createElement('span');badge.className='nxIllustrationBadge';badge.textContent='ARTE V11';
       card.append(scene,badge);
     });
   };
@@ -293,6 +293,19 @@ const nxWorldPolishBase=drawWorld;drawWorld=function(t,g){
   ctx.strokeStyle=t.accent+'36';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(q.x+5,q.y+q.h-6);ctx.lineTo(q.x+q.w-5,q.y+5);ctx.stroke();
  }
  ctx.globalAlpha=.5;for(var x=Math.floor(camera.x/92)*92;x<camera.x+view.w+92;x+=92){var seed=(x/92+caseIndex*3)%5;ctx.fillStyle=seed%2?t.accent:'#dbe6ed';ctx.fillRect(x,g-2-(seed%3),1+seed%2,2+seed%4)}ctx.restore();
+};
+
+/* V11 — a saída deve abrir independentemente da ordem entre chefe e pistas. */
+const nxProgressionBase=updateWorld;updateWorld=function(dt){
+ nxProgressionBase(dt);
+ if(state==='play'&&portal&&!portal.open&&player&&player.clues>=3&&(!boss||!boss.on)){
+  portal.open=true;bossBar.classList.remove('on');sfx('win');toast('PORTAL LIBERADO');objectiveMsg('Chefe derrotado e pistas reunidas. Entre no portal.',4);
+ }
+};
+if(location.hostname==='127.0.0.1'||location.hostname==='localhost')window.__NEXUS_TEST__={
+ snapshot:function(){return{state:state,caseIndex:caseIndex,unlocked:save.unlocked,clues:player&&player.clues,bossOn:!!(boss&&boss.on),portalOpen:!!(portal&&portal.open),playerX:player&&player.x,worldLength:CASES[caseIndex]&&CASES[caseIndex].length}},
+ bossBeforeLastClue:function(){if(!player||!portal)return{error:'case-not-started'};player.clues=3;clues.forEach(function(q){q.on=false});if(boss)boss.on=false;portal.open=false;updateHud();updateWorld(0);return this.snapshot()},
+ enterOpenPortal:function(){if(!player||!portal||!portal.open)return{error:'portal-not-open'};player.x=portal.x+2;player.y=portal.y;updateWorld(0);return this.snapshot()}
 };
 
 /* Controles de ação móveis: toque imediato, sem foco preso ou menu de seleção. */
