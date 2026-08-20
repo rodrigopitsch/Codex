@@ -3,7 +3,7 @@ setTimeout(function nxVisualPass4(){try{
   const host=document.querySelector('.stage');if(!host)return;
   document.querySelectorAll('body *').forEach(function(el){
     if(el.children.length)return;
-    if(el.textContent.includes('V7 • 13 casos'))el.textContent='V9 • 13 casos • arte redesenhada • evolução progressiva';
+    if(el.textContent.includes('V7 • 13 casos')||el.textContent.includes('V8 • 13 casos')||el.textContent.includes('V9 • 13 casos'))el.textContent='V10 • 13 casos • controles refinados • arte expandida';
     if(el.textContent.includes('use a ataque'))el.textContent=el.textContent.replace('use a ataque','use o ataque');
   });
   let atmosphere=document.getElementById('nxAtmosphere');
@@ -20,7 +20,7 @@ setTimeout(function nxVisualPass4(){try{
   if(!impact){impact=document.createElement('div');impact.id='nxImpactLine';impact.className='nxImpactLine';host.appendChild(impact)}
 
   const labels={supernatural:'sinal paranormal ativo',titan:'expedição em curso',jujutsu:'energia amaldiçoada detectada',slayer:'respiração concentrada'};
-  function syncAtmosphere(){document.body.dataset.v='9';const s=status.querySelector('span');if(s)s.textContent=labels[nxSeries]||'portal estabilizado'}
+  function syncAtmosphere(){document.body.dataset.v='10';const s=status.querySelector('span');if(s)s.textContent=labels[nxSeries]||'portal estabilizado'}
   const idV4=nId;nId=function(){idV4();syncAtmosphere()};syncAtmosphere();
 
   function flash(type){vignette.classList.remove('hit','fire');impact.classList.remove('on');void vignette.offsetWidth;vignette.classList.add(type);impact.classList.add('on')}
@@ -63,7 +63,7 @@ setTimeout(function nxVisualPass4(){try{
     chooseV5();
     panel.querySelectorAll('.universeBtn').forEach(function(card){
       const scene=document.createElement('span');scene.className='nxCardScene';scene.innerHTML='<i class="moon"></i><i class="ground"></i><i class="hero"></i>';
-      const badge=document.createElement('span');badge.className='nxIllustrationBadge';badge.textContent='ARTE V9';
+      const badge=document.createElement('span');badge.className='nxIllustrationBadge';badge.textContent='ARTE V10';
       card.append(scene,badge);
     });
   };
@@ -150,7 +150,8 @@ setTimeout(function nxVisualPass4(){try{
   };
 
   drawClue=function(q,t){
-    const y=q.y+Math.sin(gameTime*3+q.t)*3,cx=q.x+q.w/2,cy=y+q.h/2,r=11+Math.sin(gameTime*4)*1.5;
+    const qx=Number(q.x),qy=Number(q.y),qw=Number(q.w)||18,qh=Number(q.h)||22;if(!Number.isFinite(qx)||!Number.isFinite(qy))return;
+    const y=qy+Math.sin(gameTime*3+(Number(q.t)||0))*3,cx=qx+qw/2,cy=y+qh/2,r=11+Math.sin(gameTime*4)*1.5;
     ctx.save();ctx.globalCompositeOperation='screen';const glow=ctx.createRadialGradient(cx,cy,1,cx,cy,25);glow.addColorStop(0,t.accent+'b8');glow.addColorStop(1,'#0000');ctx.fillStyle=glow;ctx.fillRect(cx-27,cy-27,54,54);ctx.globalCompositeOperation='source-over';
     ctx.translate(cx,cy);ctx.rotate(gameTime*.35);ctx.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,rr=i%2?r:r*.48;const px=Math.cos(a)*rr,py=Math.sin(a)*rr;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.closePath();
     const gem=ctx.createLinearGradient(-r,-r,r,r);gem.addColorStop(0,'#fff');gem.addColorStop(.28,t.accent);gem.addColorStop(1,'#17223a');ctx.fillStyle=gem;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#05070b';ctx.stroke();ctx.restore();
@@ -183,9 +184,78 @@ setTimeout(function nxVisualPass4(){try{
   };
 }catch(e){console.warn('NEXUS visual pass 4',e)}},0);
 const NXART={supernatural:{icon:'✦',tag:'CASE FILE',sub:'Estradas, rituais e criaturas no escuro',phase:'CAÇADA NOTURNA'},titan:{icon:'⚔',tag:'EXPEDITION',sub:'Muralhas, telhados e gigantes à frente',phase:'OPERAÇÃO EXTERNA'},jujutsu:{icon:'◉',tag:'CURSED FILE',sub:'Maldições, domínios e energia instável',phase:'EXORCISMO'},slayer:{icon:'☾',tag:'NIGHT HUNT',sub:'Lâminas, luas e criaturas da noite',phase:'CAÇADA À LUA'}};
+/* Campanha completa: cada universo agora cobre os 13 casos. */
+for(let nxCase=0;nxCase<CASES.length;nxCase++){if(!NXBASE[nxCase])NXBASE[nxCase]={...CASES[nxCase]}}
+const NX_PHASE_EXT={
+ supernatural:[
+  ['Terminal da Meia-Noite','Pátio ferroviário selado','Maquinista Sem Sombra'],
+  ['Hospital dos Sussurros','Ala subterrânea','Enfermeira do Véu'],
+  ['Os Três Selos','Túnel de contenção','Guardião Tricéfalo'],
+  ['Torre de Cinza','Observatório condenado','Astrólogo Abissal'],
+  ['Rodovia 66','Deserto sem mapa','Cavaleiro da Tempestade'],
+  ['A Casa que Esquece','Rua apagada','Devorador de Memórias'],
+  ['Protocolo Véu','Instalação subterrânea','Diretor do Culto'],
+  ['A Décima Terceira Marca','Além do Véu','Rei do Outro Lado']
+ ],
+ titan:[
+  ['Arsenal Perdido','Subsolo da muralha','Titã Sentinela'],
+  ['Porto Evacuado','Cais oriental','Titã Marinho'],
+  ['Cidade Submersa','Distrito afundado','Titã Anfíbio'],
+  ['Torre de Sinal','Fronteira norte','Titã Vigia'],
+  ['Vale dos Ossos','Território aberto','Titã Colossal'],
+  ['Ruínas da Capital','Zona central','Titã Regente'],
+  ['Operação Eclipse','Muralha final','Titã do Eclipse'],
+  ['Horizonte Livre','Além das muralhas','Titã Origem']
+ ],
+ jujutsu:[
+  ['Arquivo Lacrado','Biblioteca oculta','Maldição do Conhecimento'],
+  ['Ponte das Almas','Rio interditado','Maldição Afogada'],
+  ['Teatro Vazio','Distrito cultural','Marionetista Amaldiçoado'],
+  ['Torre de Barreira','Centro urbano','Mestre da Barreira'],
+  ['Vila Sem Som','Vale remoto','Maldição do Silêncio'],
+  ['Labirinto de Sombras','Domínio fragmentado','Sombra Primordial'],
+  ['Ritual dos Treze','Câmara selada','Sacerdote Amaldiçoado'],
+  ['Coração do Nexus','Fenda dimensional','Maldição Absoluta']
+ ],
+ slayer:[
+  ['Santuário de Cinzas','Floresta queimada','Oni das Cinzas'],
+  ['Rio Rubro','Vale inundado','Oni do Rio'],
+  ['Templo das Máscaras','Montanha sagrada','Oni das Mil Faces'],
+  ['Lua sobre a Vila','Povoado cercado','Oni da Lua Nova'],
+  ['Desfiladeiro do Trovão','Caminho imperial','Oni da Tempestade'],
+  ['Palácio das Sombras','Capital noturna','Lua do Vazio'],
+  ['Dança da Aurora','Fortaleza leste','Lua do Eclipse'],
+  ['Último Amanhecer','Castelo central','Rei Oni']
+ ]
+};
+const NX_PHASE_ACCENTS={
+ supernatural:['#7ed6ff','#e5c178','#ff6d83','#b991ff','#78d9bd','#f2b86f','#a98bff','#ff536c'],
+ titan:['#a9c0a1','#72b7c7','#64c7b1','#d8c079','#d88c66','#c2b07b','#e77664','#e8d39d'],
+ jujutsu:['#78a9ff','#54d4df','#ef75ff','#a17cff','#79a6be','#8a60d8','#d879ff','#ff62dd'],
+ slayer:['#e1976f','#64c8d0','#d5aeff','#8bc5ff','#e6c166','#9b73d3','#ff789a','#ffd0a0']
+};
+function nxMixHex(a,b,t){
+ const pa=parseInt(String(a).replace('#','').slice(0,6),16),pb=parseInt(String(b).replace('#','').slice(0,6),16);
+ const ar=pa>>16,ag=pa>>8&255,ab=pa&255,br=pb>>16,bg=pb>>8&255,bb=pb&255;
+ return '#'+[ar+(br-ar)*t,ag+(bg-ag)*t,ab+(bb-ab)*t].map(function(v){return Math.round(v).toString(16).padStart(2,'0')}).join('');
+}
+Object.keys(NX_PHASE_EXT).forEach(function(key){
+ const phases=NX[key].phase;
+ NX_PHASE_EXT[key].forEach(function(phase,i){if(!phases[i+5])phases[i+5]=phase});
+ const seeds=NXPAL[key].slice(0,5);
+ NX_PHASE_EXT[key].forEach(function(_,i){
+  const index=i+5;if(NXPAL[key][index])return;
+  const seed=seeds[(i+2)%seeds.length],accent=NX_PHASE_ACCENTS[key][i];
+  NXPAL[key][index]=seed.map(function(color,slot){
+   if(slot===6)return accent;
+   const amount=slot<2?.10:slot===5?.24:.16;
+   return nxMixHex(color,accent,amount);
+  });
+ });
+});
 function nxDecor(){const a=NXART[nxSeries]||NXART.supernatural;let r=document.getElementById('nxPhaseRibbon');if(!r){r=document.createElement('div');r.id='nxPhaseRibbon';r.className='nxPhaseRibbon';stage.appendChild(r)}r.textContent=a.phase+' // FASE '+String(caseIndex+1).padStart(2,'0');if(!document.getElementById('nxCornerA')){let x=document.createElement('i');x.id='nxCornerA';x.className='nxCorner a';stage.appendChild(x);x=document.createElement('i');x.id='nxCornerB';x.className='nxCorner b';stage.appendChild(x)}}
 const nxOldId=nId;nId=function(){nxOldId();nxDecor()};nxDecor();
-nxChoose=function(){state='menu';overlay.classList.add('on');bossBar.classList.remove('on');panel.className='card nxUniverseCard';panel.innerHTML='<div class="kicker">nexus // selecione o universo</div><h1>Qual mundo você vai atravessar?</h1><p class="nxUniverseLead">A mecânica continua a mesma, mas cenário, inimigos, chefe, interface e atmosfera mudam com a campanha.</p><div class="universeGrid">'+Object.keys(NX).map(function(k,i){var a=NXART[k];return '<button class="universeBtn" data-nx="'+k+'"><span class="nxPosterIcon">'+a.icon+'</span><span class="nxPosterNo">0'+(i+1)+' // '+a.tag+'</span><b>'+NX[k].name+'</b><small>'+a.sub+'<br>'+NX[k].phase[caseIndex][0]+'</small><i class="nxTone"></i></button>'}).join('')+'</div><div class="nxUniverseHint">— O universo escolhido segue com você pelas próximas fases.</div><div class="btns"><button class="btn" id="nxBack">VOLTAR</button><button class="btn primary" id="nxRand">SURPREENDER</button></div>';panel.querySelectorAll('[data-nx]').forEach(function(b){b.onclick=function(){nxSeries=b.dataset.nx;nxCampaign=true;nxLaunch=true;nxApply();nId();startCase()}});$('nxBack').onclick=function(){panel.className='card';menu()};$('nxRand').onclick=function(){var k=Object.keys(NX);nxSeries=k[Math.floor(Math.random()*k.length)];nxCampaign=true;nxLaunch=true;nxApply();nId();startCase()}};
+nxChoose=function(){state='menu';overlay.classList.add('on');bossBar.classList.remove('on');panel.className='card nxUniverseCard';panel.innerHTML='<div class="kicker">nexus // selecione o universo</div><h1>Qual mundo você vai atravessar?</h1><p class="nxUniverseLead">A mecânica continua a mesma, mas cenário, inimigos, chefe, interface e atmosfera mudam com a campanha.</p><div class="universeGrid">'+Object.keys(NX).map(function(k,i){var a=NXART[k],phase=NX[k].phase[caseIndex]||NX[k].phase[NX[k].phase.length-1]||['Fenda desconhecida'];return '<button class="universeBtn" data-nx="'+k+'"><span class="nxPosterIcon">'+a.icon+'</span><span class="nxPosterNo">0'+(i+1)+' // '+a.tag+'</span><b>'+NX[k].name+'</b><small>'+a.sub+'<br>'+phase[0]+'</small><i class="nxTone"></i></button>'}).join('')+'</div><div class="nxUniverseHint">— O universo escolhido segue com você pelas próximas fases.</div><div class="btns"><button class="btn" id="nxBack">VOLTAR</button><button class="btn primary" id="nxRand">SURPREENDER</button></div>';panel.querySelectorAll('[data-nx]').forEach(function(b){b.onclick=function(){nxSeries=b.dataset.nx;nxCampaign=true;nxLaunch=true;nxApply();nId();startCase()}});$('nxBack').onclick=function(){panel.className='card';menu()};$('nxRand').onclick=function(){var k=Object.keys(NX);nxSeries=k[Math.floor(Math.random()*k.length)];nxCampaign=true;nxLaunch=true;nxApply();nId();startCase()}};
 const nxOldMenu=menu;menu=function(){panel.className='card';return nxOldMenu()};
 function nxSkyFx(t,w,h){ctx.save();var tm=gameTime||0;if(nxSeries==='supernatural'){var rg=ctx.createRadialGradient(w*.12,h*.68,0,w*.12,h*.68,w*.52);rg.addColorStop(0,'#d6ae6230');rg.addColorStop(.18,'#9e743014');rg.addColorStop(1,'#0000');ctx.fillStyle=rg;ctx.fillRect(0,0,w,h);ctx.strokeStyle='#d6b56b22';ctx.lineWidth=1;for(var i=0;i<7;i++){var y=h*.25+i*17+Math.sin(tm*.35+i)*2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y+9);ctx.stroke()}}else if(nxSeries==='titan'){ctx.fillStyle='#d9bd7c14';for(var i=0;i<26;i++){var x=(i*83+tm*13)%(w+80)-40,y=(i*47+tm*7)%(h*.76);ctx.fillRect(x,y,1+(i%2),1+(i%3===0))}ctx.strokeStyle='#f0dab51c';ctx.lineWidth=2;for(var i=0;i<4;i++){var xx=(i*117+tm*25)%(w+130)-65;ctx.beginPath();ctx.moveTo(xx,h*.12);ctx.lineTo(xx+70,h*.72);ctx.stroke()}}else if(nxSeries==='jujutsu'){for(var i=0;i<13;i++){var a=tm*.24+i*1.7,rx=w*(.15+(i%5)*.18),ry=h*(.18+(i%4)*.13);ctx.strokeStyle=i%3?'#9b71ff18':'#e7ddff16';ctx.lineWidth=1;ctx.beginPath();ctx.arc(rx+Math.sin(a)*12,ry+Math.cos(a*.7)*8,6+(i%4)*4,a,a+Math.PI*1.25);ctx.stroke()}var g=ctx.createRadialGradient(w*.72,h*.28,2,w*.72,h*.28,w*.33);g.addColorStop(0,'#8355e51b');g.addColorStop(1,'#0000');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}else{ctx.fillStyle='#ffe8d51b';for(var i=0;i<18;i++){var x=(i*71+Math.sin(tm*.4+i)*24+w)%w,y=(i*37+tm*9)%(h*.72);ctx.save();ctx.translate(x,y);ctx.rotate(tm*.7+i);ctx.fillRect(-2,-1,4,2);ctx.restore()}}ctx.restore()}
 const nxSkyBase=drawSky;drawSky=function(t,w,h){nxSkyBase(t,w,h);nxSkyFx(t,w,h)};
@@ -195,4 +265,56 @@ function nxEnemyDetail(e,t){var cx=e.x+e.w/2,cy=e.y+e.h/2;ctx.save();if(nxSeries
 const nxEnemyBase=drawEnemy;drawEnemy=function(e,t){nxEnemyBase(e,t);nxEnemyDetail(e,t)};
 const nxBossBase=drawBoss;drawBoss=function(b,t){nxBossBase(b,t);var cx=b.x+b.w/2,cy=b.y+b.h/2,pulse=3+Math.sin(gameTime*4)*2;ctx.save();ctx.globalAlpha=.45;ctx.strokeStyle=t.accent;ctx.lineWidth=1.3;for(var i=0;i<3;i++){ctx.beginPath();ctx.arc(cx,cy,42+i*7+pulse,gameTime*.25+i*.7,gameTime*.25+i*.7+Math.PI*1.25);ctx.stroke()}ctx.globalAlpha=.12;ctx.fillStyle=t.accent;ctx.beginPath();ctx.arc(cx,cy,50+pulse,0,Math.PI*2);ctx.fill();ctx.restore()};
 const nxShotBase=drawShot;drawShot=function(s,t){nxShotBase(s,t);ctx.save();if(nxSeries==='jujutsu'){ctx.globalAlpha=.3;ctx.strokeStyle=t.accent;ctx.beginPath();ctx.arc(s.x+4,s.y+4,11+Math.sin(gameTime*9)*2,0,Math.PI*2);ctx.stroke()}if(nxSeries==='slayer'){ctx.globalAlpha=.26;ctx.strokeStyle='#dffff7';ctx.beginPath();ctx.arc(s.x+4,s.y+5,14,-1.05,.45);ctx.stroke()}if(nxSeries==='titan'){ctx.globalAlpha=.28;ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(s.x-12,s.y+8);ctx.lineTo(s.x+5,s.y+3);ctx.stroke()}ctx.restore()};
+
+/* V10 — acabamento dos elementos de jogo e leitura de profundidade. */
+const nxPortalBase=drawPortal;drawPortal=function(p,t){
+ nxPortalBase(p,t);if(!p)return;var cx=p.x+p.w/2,cy=p.y+p.h/2,tm=gameTime||0;
+ ctx.save();ctx.lineCap='round';ctx.globalCompositeOperation='screen';
+ if(p.open){
+  var glow=ctx.createRadialGradient(cx,cy,2,cx,cy,44);glow.addColorStop(0,'#ffffffa8');glow.addColorStop(.24,t.accent+'72');glow.addColorStop(1,'#0000');ctx.fillStyle=glow;ctx.fillRect(cx-48,cy-52,96,104);
+  for(var i=0;i<3;i++){ctx.globalAlpha=.68-i*.16;ctx.strokeStyle=i===0?'#fff':t.accent;ctx.lineWidth=2-i*.35;ctx.beginPath();ctx.ellipse(cx,cy,15+i*6+Math.sin(tm*3+i)*2,27+i*5,tm*.35+i*.9,0,Math.PI*2);ctx.stroke()}
+  for(var j=0;j<7;j++){var a=tm*(.7+j*.04)+j*.9,r=25+(j%3)*7;ctx.globalAlpha=.65;ctx.fillStyle=j%2?'#fff':t.accent;ctx.fillRect(cx+Math.cos(a)*r-1,cy+Math.sin(a)*r*1.35-1,2,2)}
+ }
+ ctx.restore();
+};
+const nxOrbBase=drawOrb;drawOrb=function(o,t){
+ nxOrbBase(o,t);var bob=Math.sin((Number(o.t)||0)*3)*3,x=o.x,y=o.y+bob;
+ ctx.save();ctx.globalCompositeOperation='screen';ctx.strokeStyle='#fff';ctx.globalAlpha=.72;ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,8+Math.sin(gameTime*5+o.x)*1.5,gameTime,gameTime+4.4);ctx.stroke();ctx.fillStyle=t.accent;ctx.globalAlpha=.18;ctx.beginPath();ctx.arc(x,y,17,0,Math.PI*2);ctx.fill();ctx.restore();
+};
+const nxCheckpointBase=drawCheckpoint;drawCheckpoint=function(cp,t){
+ nxCheckpointBase(cp,t);ctx.save();ctx.translate(cp.x+10,cp.y+10);ctx.strokeStyle=cp.lit?'#fff':t.accent;ctx.globalAlpha=cp.lit?.72:.32;ctx.lineWidth=1;
+ for(var i=0;i<3;i++){ctx.rotate(.34+i*.17);ctx.strokeRect(-6-i*2,-6-i*2,12+i*4,12+i*4)}ctx.restore();
+};
+const nxWorldPolishBase=drawWorld;drawWorld=function(t,g){
+ nxWorldPolishBase(t,g);ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+ for(var i=1;i<platforms.length;i++){
+  var q=platforms[i],shine=ctx.createLinearGradient(q.x,q.y,q.x,q.y+12);shine.addColorStop(0,t.accent+'a8');shine.addColorStop(.22,'#aeb9ca55');shine.addColorStop(1,'#0000');ctx.fillStyle=shine;ctx.fillRect(q.x,q.y,q.w,8);
+  ctx.fillStyle='#05070b99';ctx.fillRect(q.x+3,q.y+q.h-3,q.w-6,3);ctx.fillStyle='#dce7f0a8';for(var bx=q.x+9;bx<q.x+q.w-5;bx+=24){ctx.beginPath();ctx.arc(bx,q.y+5,1.2,0,Math.PI*2);ctx.fill()}
+  ctx.strokeStyle=t.accent+'36';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(q.x+5,q.y+q.h-6);ctx.lineTo(q.x+q.w-5,q.y+5);ctx.stroke();
+ }
+ ctx.globalAlpha=.5;for(var x=Math.floor(camera.x/92)*92;x<camera.x+view.w+92;x+=92){var seed=(x/92+caseIndex*3)%5;ctx.fillStyle=seed%2?t.accent:'#dbe6ed';ctx.fillRect(x,g-2-(seed%3),1+seed%2,2+seed%4)}ctx.restore();
+};
+
+/* Controles de ação móveis: toque imediato, sem foco preso ou menu de seleção. */
+document.querySelectorAll('[data-key="jump"],[data-key="shoot"]').forEach(function(button){
+ button.tabIndex=-1;button.setAttribute('aria-pressed','false');
+ if(!button.querySelector('.nxTouchPulse')){var pulse=document.createElement('i');pulse.className='nxTouchPulse';button.appendChild(pulse)}
+ var action=button.dataset.key,activePointer=null;
+ function release(event){
+  if(activePointer!==null&&event.pointerId!==undefined&&event.pointerId!==activePointer)return;
+  if(event.cancelable)event.preventDefault();event.stopImmediatePropagation();keyUp(action);button.classList.remove('on','nxPressed');button.setAttribute('aria-pressed','false');button.blur();
+  try{if(event.pointerId!==undefined&&button.hasPointerCapture(event.pointerId))button.releasePointerCapture(event.pointerId)}catch(_){}activePointer=null;
+ }
+ button.addEventListener('pointerdown',function(event){
+  if(event.button!==undefined&&event.button!==0)return;event.preventDefault();event.stopImmediatePropagation();initAudio();button.blur();activePointer=event.pointerId;
+  try{button.setPointerCapture(event.pointerId)}catch(_){}button.classList.add('on','nxPressed');button.setAttribute('aria-pressed','true');keyDown(action);
+  if(navigator.vibrate)try{navigator.vibrate(action==='shoot'?9:13)}catch(_){}
+ },{capture:true,passive:false});
+ button.addEventListener('pointerup',release,{capture:true,passive:false});
+ button.addEventListener('pointercancel',release,{capture:true,passive:false});
+ button.addEventListener('lostpointercapture',function(event){if(activePointer!==null)release(event)},{capture:true,passive:false});
+ button.addEventListener('contextmenu',function(event){event.preventDefault();event.stopImmediatePropagation();button.blur()},{capture:true});
+ button.addEventListener('dragstart',function(event){event.preventDefault()},{capture:true});
+});
+document.getElementById('controls')?.addEventListener('selectstart',function(event){event.preventDefault()},{capture:true});
 
