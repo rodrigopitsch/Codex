@@ -1,16 +1,18 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#050711"><meta name="apple-mobile-web-app-capable" content="yes"><title>NEXUS — Caçadas Entre Mundos</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#050711"><meta name="color-scheme" content="dark"><meta name="description" content="NEXUS: plataforma 2D com 13 caçadas, quatro universos e progressão permanente."><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23050711'/%3E%3Cpath d='M15 16h8l18 31h8L31 16h-8L15 47h8l9-16' fill='%23b893ff'/%3E%3C/svg%3E"><title>NEXUS — Caçadas Entre Mundos</title>
 <style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#04060b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 25%,#211536 0,#080b12 36%,#030407 76%)}.boot{width:min(88vw,540px);text-align:center;padding:30px;position:relative}.boot:before{content:"";position:absolute;left:50%;top:0;width:110px;height:110px;transform:translateX(-50%);border:1px solid #ad85ff2f;border-radius:50%;box-shadow:0 0 50px #8e5be82a,inset 0 0 25px #8e5be81c}.mark{position:relative;font-size:10px;font-weight:950;letter-spacing:.28em;color:#b893ff}.boot h1{position:relative;margin:9px 0 6px;font-size:clamp(30px,8vw,50px);line-height:.9;letter-spacing:-.05em;text-shadow:0 8px 30px #000}.boot p{position:relative;color:#9ba8bc;font-size:11px}.bar{position:relative;height:3px;margin:20px auto 0;max-width:280px;border-radius:99px;overflow:hidden;background:#171d2c}.bar i{display:block;width:28%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6c43bf,#b58bff,#73e2ff);box-shadow:0 0 13px #9c78ff;animation:load 1s ease-in-out infinite alternate}@keyframes load{to{transform:translateX(255%)}}.err{color:#ff9ca8!important}</style></head>
 <body><main class="boot"><div class="mark">NEXUS // VISUAL SYSTEM</div><h1>Caçadas Entre Mundos</h1><p id="msg">Montando o universo, a atmosfera e os inimigos…</p><div class="bar"><i></i></div></main>
 <script>
 (async()=>{'use strict';
 const base='https://raw.githubusercontent.com/rodrigopitsch/Codex/768fbe84f979a00499ffc1b7bbefd60b54f7d207/nexus-cacadas/index.html';
-const assets='https://raw.githubusercontent.com/rodrigopitsch/Codex/dbe37ab4e845b7d196d1559b6bc16e3b188b11b2/nexus-cacadas/';
+const assets='./';
 const get=async u=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw Error(u);return r.text()};
-let [html,css,js]=await Promise.all([get(base),get(assets+'visual-v3.css'),get(assets+'visual-v3.js')]);
+let [html,css,js]=await Promise.all([get(base),get(assets+'visual-v4.css'),get(assets+'visual-v4.js')]);
 if(!html.includes("const css=String.raw`")||!html.includes("const js=String.raw`"))throw Error('Base visual incompatível');
+html=html.replace('V7 • 13 casos • evolução com custos progressivos','V8 • 13 casos • visual expandido • evolução progressiva').replace('use a ataque','use o ataque');
 html=html.replace("const css=String.raw`","const css=String.raw`"+css);
 html=html.replace("const js=String.raw`","const js=String.raw`setTimeout(()=>{try{"+js+"}catch(e){console.warn('NEXUS visual pass',e)}},0);\n");
 document.open();document.write(html);document.close();
 })().catch(e=>{console.error(e);const m=document.getElementById('msg');if(m){m.classList.add('err');m.textContent='Não foi possível carregar o NEXUS. Reabra a página conectado à internet.'}});
 </script></body></html>
+
