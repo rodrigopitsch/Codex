@@ -10,6 +10,10 @@ const get=async u=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw Err
 let [html,css,js]=await Promise.all([get(base),get(assets+'visual-v4.css'),get(assets+'visual-v4.js')]);
 if(!html.includes("const css=String.raw`")||!html.includes("const js=String.raw`"))throw Error('Base visual incompatível');
 html=html.replace('V7 • 13 casos • evolução com custos progressivos','V8 • 13 casos • visual expandido • evolução progressiva').replace('use a ataque','use o ataque');
+const brokenLayouts="const gy=groundY(),hs=[[46,74,58,92],[78,104,56,86],[96,58,82,108],[48,84,60,98],[68,42,90,112]][caseIndex];";
+const completeLayouts="const gy=groundY(),hs=[[46,74,58,92],[78,104,56,86],[96,58,82,108],[48,84,60,98],[68,42,90,112],[64,96,52,88],[82,48,108,68],[54,112,72,94],[104,62,86,44],[70,118,58,98],[92,52,116,76],[48,108,66,124],[118,72,96,54]][caseIndex]||[68,92,58,104];";
+const wrapperHook="const css=String.raw`";
+html=html.replace(wrapperHook,"html=html.replace("+JSON.stringify(brokenLayouts)+","+JSON.stringify(completeLayouts)+");\n"+wrapperHook);
 html=html.replace("const css=String.raw`","const css=String.raw`"+css);
 html=html.replace("const js=String.raw`","const js=String.raw`setTimeout(()=>{try{"+js+"}catch(e){console.warn('NEXUS visual pass',e)}},0);\n");
 document.open();document.write(html);document.close();
